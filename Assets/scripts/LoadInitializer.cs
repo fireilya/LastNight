@@ -19,12 +19,13 @@ namespace Assets.scripts
     {
         private BackgroundWorker backgroundInitializator=new();
         public TextMeshProUGUI message;
-        void Awake()
+
+        async void Awake()
         {
 
             //backgroundInitializator.RunWorkerAsync(StartCoroutine(Initialize()));
             MusicCore.ReadNamesOfMusic();
-            MusicCore.LoadStartSong();
+            await MusicCore.LoadStartSong();
             SceneManager.LoadScene(1);
         }
 

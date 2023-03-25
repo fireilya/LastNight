@@ -116,7 +116,12 @@ namespace Assets.scripts
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new WindowEnumerator<T>(this);
+            var current = FirstNode;
+            while (current is not null)
+            {
+                yield return current.Value;
+                current = current.Next;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

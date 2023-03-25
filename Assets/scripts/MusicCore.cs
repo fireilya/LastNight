@@ -70,17 +70,22 @@ namespace Assets.scripts
             }
         }
 
-        public static void LoadStartSong()
+        public static async Task LoadStartSong()
         {
-            SetPlaylist(startPlayList);
+            await SetPlaylist(startPlayList);
             var index = 0;
-            if (musicWindow.Any(music => music.name==startMusic))
+            foreach (var clip in musicWindow)
             {
-                musicWindow.SetOutToIndex(index);
+                if (clip.name==startMusic)
+                {
+                    musicWindow.SetOutToIndex(index);
+                    break;
+                }
+                index++;
             }
         }
 
-        public static void SetPlaylist(string playlistName)
+        public static async Task SetPlaylist(string playlistName)
         {
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var playlists = musicDirectory.GetDirectories();
@@ -95,7 +100,7 @@ namespace Assets.scripts
             CurrentPlayList=playlistToSet;
             MusicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
             musicWindow = new Window<AudioClip>(windowSize, MusicFromCurrentPlaylist.Length);
-            FillWindow();
+            await FillWindow();
         }
 
         private static async Task<AudioClip> DownloadNextSong(bool isRight)
@@ -121,7 +126,7 @@ namespace Assets.scripts
             return audioClip;
         }
 
-        public static async void FillWindow()
+        public static async Task FillWindow()
         {
             musicWindow.Clear();
             for (var i = 0; i <= musicWindow.Size; i++)

@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Assets.scripts
 {
-    public class Window <T> : IEnumerable<T>
+    public class MusicWindow : IEnumerable<AudioClip>
     {
-        public Window(int size, int arrayLength)
+        public MusicWindow(int size, int arrayLength)
         {
             FirstNode = null;
             LastNode = null;
@@ -17,17 +17,17 @@ namespace Assets.scripts
             WindowRange = new Range(0, 0);
             this.arrayLength= arrayLength;
         }
-        public Node<T> FirstNode { get; private set; }
-        public Node<T> LastNode { get; private set; }
+        public Node FirstNode { get; private set; }
+        public Node LastNode { get; private set; }
         public Range WindowRange;
         public int Size { get; set; }
-        public Node<T> CurrentNode { get; set; }
+        public Node CurrentNode { get; set; }
         private int CurrentIndex;
         private int arrayLength;
 
-        public void AddLast(T clip)
+        public void AddLast(AudioClip clip)
         {
-            var newNode = new Node<T>(clip);
+            var newNode = new Node(clip);
             newNode.Previous = LastNode;
             FirstNode ??= newNode;
             if (LastNode is null)
@@ -41,9 +41,9 @@ namespace Assets.scripts
             WindowRange.End++;
         }
 
-        public void AddFirst(T clip)
+        public void AddFirst(AudioClip clip)
         {
-            var newNode = new Node<T>(clip);
+            var newNode = new Node(clip);
             newNode.Next = FirstNode;
             FirstNode.Previous = newNode;
             FirstNode = newNode;
@@ -58,16 +58,16 @@ namespace Assets.scripts
         }
 
 
-        public void ShiftRight(T clip)
+        public async void ShiftRight()
         {
-            if (CurrentIndex<4)
+            if (CurrentIndex<Size / 2)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
             }
             else
             {
-                if (CurrentIndex>4)
+                if (CurrentIndex> Size / 2)
                 {
                     NormalizeWindow();
                 }
@@ -77,27 +77,27 @@ namespace Assets.scripts
                 }
                 else
                 {
-                    MusicCore.FillWindow();
+                    await MusicCore.FillWindow();
                     return;
                 }
 
                 if (WindowRange.End + 1 == arrayLength) return;
-                AddLast(clip);
+                AddLast(await MusicCore.DownloadNextSong(true));
                 WindowRange.Start++;
                 FirstNode = FirstNode.Next;
             }
         }
 
-        public void ShiftLeft(T clip)
+        public async void ShiftLeft()
         {
-            if (CurrentIndex > 4)
+            if (CurrentIndex > Size/2)
             {
                 CurrentIndex--;
                 CurrentNode= CurrentNode.Previous;
             }
             else
             {
-                if (CurrentIndex<4)
+                if (CurrentIndex<Size/2)
                 {
                     NormalizeWindow();
                 }
@@ -109,12 +109,12 @@ namespace Assets.scripts
                 if (WindowRange.Start - 1 < 0) return;
                 WindowRange.Start--;
                 WindowRange.End--;
-                AddFirst(clip);
+                AddFirst(await MusicCore.DownloadNextSong(false));
                 LastNode = LastNode.Previous;
             }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<AudioClip> GetEnumerator()
         {
             var current = FirstNode;
             while (current is not null)
@@ -133,7 +133,7 @@ namespace Assets.scripts
         {
             CurrentIndex = 0;
             CurrentNode = FirstNode;
-            while (CurrentIndex!=index)
+            while (CurrentIndex!=index && CurrentNode.Next is not null)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
@@ -142,14 +142,14 @@ namespace Assets.scripts
 
         private void NormalizeWindow()
         {
-            while (CurrentIndex < 4 && WindowRange.Start != 0)
+            while (CurrentIndex < Size / 2 && WindowRange.Start != 0)
             {
                 WindowRange.Start--;
                 WindowRange.End--;
                 CurrentIndex++;
             }
 
-            while (CurrentIndex>4 && WindowRange.End!=arrayLength)
+            while (CurrentIndex> Size / 2 && WindowRange.End!=arrayLength)
             {
                 WindowRange.End++;
                 WindowRange.Start++;
@@ -158,23 +158,17 @@ namespace Assets.scripts
         }
     }
 
-    public class Node<T>
+    public class Node
     {
-        public Node(T value)
+        public Node(AudioClip value)
         {
             Next = null;
             Value = value;
             Previous = null;
         }
-        public Node(T value, Node<T> next, Node<T> previous)
-        {
-            Next = next;
-            Value = value;
-            Previous = previous;
-        }
 
-        public Node<T> Next { get; set; }
-        public Node<T> Previous { get; set; }
-        public T Value { get; set; }
+        public Node Next { get; set; }
+        public Node Previous { get; set; }
+        public AudioClip Value { get; set; }
     }
 }

@@ -46,11 +46,11 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
                     break;
 
                 case "MoveForwardButton":
-                    StartCoroutine(PressMoveButton(MoveForwardButtonAnimator, 1));
+                    StartCoroutine(PressMoveButton(MoveForwardButtonAnimator, true));
                     break;
 
                 case "MoveBackButton":
-                    StartCoroutine(PressMoveButton(MoveBackButtonAnimator, -1));
+                    StartCoroutine(PressMoveButton(MoveBackButtonAnimator, false));
                     break;
             }
     }
@@ -71,15 +71,15 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
 
         if (!Music.isPlaying && PlayButtonAnimator.GetBool("IsBump") && MusicCore.IsStarted)
         {
-            MusicCore.MoveMusic(1, true, Music);
+            MusicCore.MoveMusic(true, true, Music);
         }
     }
 
-    public IEnumerator PressMoveButton(Animator buttonAnimator, int direction)
+    public IEnumerator PressMoveButton(Animator buttonAnimator, bool isForward)
     {
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         var temp=rollSpeed;
-        rollSpeed=moveSpeed*direction;
+        rollSpeed=moveSpeed*(isForward?1:-1);
         Music.Stop();
         MusicCore.IsStarted = false;
         isPaused=false;
@@ -87,7 +87,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         yield return new WaitForSeconds(commonWait);
         SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.MoveMusic, 120f);
         yield return new WaitForSeconds(moveWait);
-        MusicCore.MoveMusic(direction, PlayButtonAnimator.GetBool("IsBump"), Music);
+        MusicCore.MoveMusic(isForward, PlayButtonAnimator.GetBool("IsBump"), Music);
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         rollSpeed = temp;
     }

@@ -83,9 +83,9 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         Music.Stop();
         MusicCore.IsStarted = false;
         _isPaused=false;
-        SounderControl.PlaySound(Sounder, SounderControl.Fx, Sounds.PressButtonLatch);
+        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
-        SounderControl.PlaySound(Sounder, SounderControl.Fx, Sounds.MoveMusic, 120f);
+        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.MoveMusic, 120f);
         yield return new WaitForSeconds(MoveWait);
         MusicCore.MoveMusic(isForward, PlayButtonAnimator.GetBool("IsBump"), Music);
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
@@ -111,7 +111,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
             Music.Pause();
             _isPaused = true;
         }
-        SounderControl.PlaySound(Sounder, SounderControl.Fx, Sounds.PressButtonLatch);
+        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         RollSpeed = Math.Abs(RollSpeed - StopSpeed) < 1e-3 ? PlaySpeed : StopSpeed;
     }
@@ -123,7 +123,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         RollSpeed = StopSpeed;
         MusicCore.StopMusic(Music);
         _isPaused = false;
-        SounderControl.PlaySound(Sounder, SounderControl.Fx, Sounds.PressButtonLatch);
+        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         StopButtonAnimator.SetBool("IsBump", !StopButtonAnimator.GetBool("IsBump"));
     }

@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
     public ControllerManager ControllerManager;
     public void EnableSettings()
     {
-        SounderController.PlaySound(Sounder, SounderController.Fx, Sounds.Transition, 60f);
+        SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
         CameraAnimator.SetBool("IsEnableSettings", true);
         ControllerManager.StartClock();
     }

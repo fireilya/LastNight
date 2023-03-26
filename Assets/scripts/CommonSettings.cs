@@ -38,7 +38,7 @@ public class CommonSettings : MonoBehaviour
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
-        StartSong.SetValueWithoutNotify(Array.IndexOf(MusicCore.MusicFromCurrentPlaylist.ToArray(), MusicCore.startMusic));
+       // StartSong.SetValueWithoutNotify(Array.IndexOf(MusicCore.musicFromCurrentPlaylist.ToArray(), MusicCore.startMusic));
     }
 
     

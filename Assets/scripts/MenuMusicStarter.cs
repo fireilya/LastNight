@@ -18,7 +18,7 @@ namespace Assets.scripts
 
         IEnumerator Starter()
         {
-            while (!MediaPlayer.isStarted)
+            while (!MediaPlayer.IsStarted)
             {
                 yield return null;
             }

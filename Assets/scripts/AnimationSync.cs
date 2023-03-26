@@ -10,9 +10,9 @@ public class AnimationSync : MonoBehaviour
     public SoundsController SounderController;
     public GameObject Settings;
     public GameObject Menu;
-    private bool _isSettingsEnabled;
-    private bool _isMenuEnabled=true;
-    private byte _tik = 0;
+    private bool isSettingsEnabled;
+    private bool isMenuEnabled=true;
+    private byte tik;
 
     private Sounds[] _tikTak = new Sounds[]
     {
@@ -22,18 +22,18 @@ public class AnimationSync : MonoBehaviour
 
     public void PlayTik()
     {
-        SounderController.PlaySound(Sounder, SounderController.FX, _tikTak[++_tik%2]);
+        SounderController.PlaySound(Sounder, SounderController.FX, _tikTak[++tik%2]);
     }
 
     public void ToggleSetting()
     {
-        _isSettingsEnabled = !_isSettingsEnabled;
-        Settings.SetActive(_isSettingsEnabled);
+        isSettingsEnabled = !isSettingsEnabled;
+        Settings.SetActive(isSettingsEnabled);
     }
 
     public void ToggleMenu()
     {
-        _isMenuEnabled = !_isMenuEnabled;
-        Menu.SetActive(_isMenuEnabled);
+        isMenuEnabled = !isMenuEnabled;
+        Menu.SetActive(isMenuEnabled);
     }
 }

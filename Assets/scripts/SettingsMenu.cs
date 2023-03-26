@@ -36,6 +36,7 @@ public class SettingsMenu : MonoBehaviour
     }
     public void SetDefault()
     {
+       // SettingsCore.WriteSettingsTo(SettingsCore.ReadDefaultSettings(), PathCore.SettingsFilePath);
         SettingsCore.SetSettings(SettingsCore.ReadDefaultSettings());
         CommonSettings.UpdateValues();
     }

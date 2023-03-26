@@ -11,13 +11,15 @@ public class CommonSettings : MonoBehaviour
 {
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
-    private int startPlayListValue = Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList);
     void Start()
     {
         StartPlaylist.ClearOptions();
         StartSong.ClearOptions();
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
+        StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        StartSong.SetValueWithoutNotify(Array.IndexOf(
+            MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startMusic));
     }
 
     public void SetStartPlayList()
@@ -38,7 +40,6 @@ public class CommonSettings : MonoBehaviour
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
-       // StartSong.SetValueWithoutNotify(Array.IndexOf(MusicCore.musicFromCurrentPlaylist.ToArray(), MusicCore.startMusic));
     }
 
     

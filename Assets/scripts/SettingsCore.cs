@@ -33,6 +33,7 @@ namespace Assets.scripts
                 ? new FileStream(PathCore.DefaultSettingsFilePath, FileMode.Open)
                 : new FileStream(PathCore.SettingsFilePath, FileMode.Open);
             var settings = formatter.Deserialize(stream) as SettingsData;
+
             stream.Close();
             return settings;
 
@@ -42,11 +43,13 @@ namespace Assets.scripts
         {
             var stream = new FileStream(PathCore.DefaultSettingsFilePath, FileMode.Open);
             var settings = formatter.Deserialize(stream) as SettingsData;
+            stream.Close();
             return settings;
         }
 
         public static void SetSettings(SettingsData data)
         {
+            SettingsMenu.data=data;
             MusicCore.startPlayList = data.StartPlayList;
             MusicCore.startMusic = data.StartSong;
         }

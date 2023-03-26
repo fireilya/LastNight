@@ -51,7 +51,7 @@ namespace Assets.scripts
         {
             SettingsMenu.data=data;
             MusicCore.startPlayList = data.StartPlayList;
-            MusicCore.startMusic = data.StartSong;
+            MusicCore.startSong = data.StartSong;
         }
     }
 }

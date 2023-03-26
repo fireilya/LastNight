@@ -23,7 +23,7 @@ namespace Assets.scripts
 
         public static Dictionary<string, string[]> MusicNameInPlaylists = new();
         public static List<string> PlayListNaming = new();
-        public static string startMusic = "Angliya-Skazochniy Mir.mp3";
+        public static string startSong = "Angliya-Skazochniy Mir.mp3";
         public static string startPlayList = "menu";
         private static MusicWindow musicWindow;
         public static int windowSize = 9;
@@ -75,7 +75,7 @@ namespace Assets.scripts
             var index = 0;
             foreach (var clip in musicWindow)
             {
-                if (clip.name == startMusic)
+                if (clip.name == startSong)
                 {
                     musicWindow.SetOutToIndex(index);
                     return;
@@ -86,7 +86,7 @@ namespace Assets.scripts
 
             index--;
             musicWindow.SetOutToIndex(index);
-            while (musicWindow.CurrentNode.Value.name != startMusic && index < musicFromCurrentPlaylist.Length)
+            while (musicWindow.CurrentNode.Value.name != startSong && index < musicFromCurrentPlaylist.Length)
             {
                 musicWindow.ShiftRight();
                 index++;

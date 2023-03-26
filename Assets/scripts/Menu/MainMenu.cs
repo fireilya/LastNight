@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameObject Menu;
-    public GameObject Settings;
     public Animator CameraAnimator;
     public SoundsController SounderController;
     public AudioSource Sounder;

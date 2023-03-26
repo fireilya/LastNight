@@ -11,6 +11,8 @@ public class SettingsData
     public string StartSong;
     public string MusicPath;
     public int CacheWindowSize;
+    public float GlobalMusicVolume;
+    public float GlobalSoundVolume;
 
     public SettingsData()
     {

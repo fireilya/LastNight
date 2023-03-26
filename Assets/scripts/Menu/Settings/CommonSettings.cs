@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.scripts;
+using Assets.scripts.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CommonSettings : MonoBehaviour
+public class CommonSettings : MonoBehaviour, IResetable
 {
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;

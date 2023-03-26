@@ -10,6 +10,7 @@ public class AnimationSync : MonoBehaviour
     public SoundsController SounderController;
     public GameObject Settings;
     public GameObject Menu;
+    public GameObject Common;
     private bool isSettingsEnabled;
     private bool isMenuEnabled=true;
     private byte tik;

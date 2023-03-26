@@ -25,7 +25,8 @@ namespace Assets.scripts
         public void PlaySound(AudioSource source, AudioClip[] type, Sounds sound, float percentVolume=100)
         {
             source.clip = type[(int)sound];
-            Mixer.audioMixer.SetFloat("soundVolume", -100 + percentVolume);
+            var Volume = -100 + percentVolume * MixerController.SoundVolume;
+            Mixer.audioMixer.SetFloat("soundVolume", -100 + percentVolume*MixerController.SoundVolume);
             source.Play();
         }
     }

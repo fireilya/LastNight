@@ -16,6 +16,8 @@ namespace Assets.scripts
             data.StartSong = "Angliya-Skazochniy Mir.mp3";
             data.MusicPath= Application.dataPath + @"/Music";
             data.CacheWindowSize = 9;
+            data.GlobalMusicVolume = 100f;
+            data.GlobalSoundVolume = 1f;
             SettingsCore.WriteSettingsTo(data, PathCore.DefaultSettingsFilePath);
         }
     }

@@ -10,13 +10,6 @@ public class ClockController : MonoBehaviour
 
     public Animator PendulumAnimator;
     public static bool IsWalking = true;
-    void Start()
-    {
-    }
-
-    void Update()
-    {
-    }
 
     public IEnumerator ClockWalk()
     {

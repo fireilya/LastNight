@@ -11,7 +11,7 @@ namespace Assets.scripts
     {
         private static AudioClip[] AllMusic;
         private static DirectoryInfo CurrentPlayList;
-        private static FileInfo[] MusicFromCurrentPlaylist;
+        private static FileInfo[] musicFromCurrentPlaylist;
         public static bool IsStarted;
 
         private static AudioType[] SupportedAudioFormats =
@@ -26,7 +26,7 @@ namespace Assets.scripts
         public static string startMusic = "Angliya-Skazochniy Mir.mp3";
         public static string startPlayList = "menu";
         private static MusicWindow musicWindow;
-        private static readonly int windowSize = 50;
+        public static int windowSize = 9;
         private static int rightEdgeSong;
         private static int leftEdgeSong;
 
@@ -86,8 +86,11 @@ namespace Assets.scripts
 
             index--;
             musicWindow.SetOutToIndex(index);
-            while (musicWindow.CurrentNode.Value.name != startMusic && index < MusicFromCurrentPlaylist.Length)
+            while (musicWindow.CurrentNode.Value.name != startMusic && index < musicFromCurrentPlaylist.Length)
+            {
                 musicWindow.ShiftRight();
+                index++;
+            }
         }
 
         public static async Task SetPlaylist(string playlistName)
@@ -99,8 +102,8 @@ namespace Assets.scripts
                 if (playlist.Name == playlistName)
                     playlistToSet = playlist;
             CurrentPlayList = playlistToSet;
-            MusicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            musicWindow = new MusicWindow(windowSize, MusicFromCurrentPlaylist.Length);
+            musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
+            musicWindow = new MusicWindow(windowSize, musicFromCurrentPlaylist.Length);
             rightEdgeSong = 0;
             leftEdgeSong = 0;
             await FillWindow();
@@ -108,7 +111,7 @@ namespace Assets.scripts
 
         public static async Task<AudioClip> DownloadNextSong(bool isRight)
         {
-            var clip = MusicFromCurrentPlaylist[isRight ? rightEdgeSong++ : leftEdgeSong++];
+            var clip = musicFromCurrentPlaylist[isRight ? rightEdgeSong++ : leftEdgeSong++];
             var url = UnityWebRequestMultimedia.GetAudioClip("file:///" 
                                                              + PathCore.MusicDirectoryPath 
                                                              + "/" 
@@ -127,7 +130,7 @@ namespace Assets.scripts
             musicWindow.Clear();
             for (var i = 0; i <= musicWindow.Size; i++)
             {
-                if (rightEdgeSong == MusicFromCurrentPlaylist.Length) break;
+                if (rightEdgeSong == musicFromCurrentPlaylist.Length) break;
                 musicWindow.AddLast(await DownloadNextSong(true));
             }
         }

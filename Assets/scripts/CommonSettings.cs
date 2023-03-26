@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +11,36 @@ public class CommonSettings : MonoBehaviour
 {
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
-
     void Start()
     {
         StartPlaylist.ClearOptions();
         StartSong.ClearOptions();
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
+        StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
-        SettingsData.StartPlayList = MusicCore.PlayListNaming[StartPlaylist.value];
-        SettingsData.StartSong =
-            MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]][StartSong.value];
+        StartSong.SetValueWithoutNotify(Array.IndexOf(
+            MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startMusic));
     }
 
     public void SetStartPlayList()
     {
-        SettingsData.StartPlayList = MusicCore.PlayListNaming[StartPlaylist.value];
+        SettingsMenu.data.StartPlayList = MusicCore.PlayListNaming[StartPlaylist.value];
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
     }
 
     public void SetStartSong()
     {
-        SettingsData.StartSong =
+        SettingsMenu.data.StartSong =
             MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]][StartSong.value];
     }
+
+    public void UpdateValues()
+    {
+        StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
+        StartSong.ClearOptions();
+        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+    }
+
+    
 }

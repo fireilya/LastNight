@@ -7,11 +7,11 @@ using UnityEngine;
 [Serializable]
 public class SettingsData
 {
-    public static string StartPlayList;
-    public static string StartSong;
+    public string StartPlayList;
+    public string StartSong;
 
-    public SettingsData(string a, string b)
+    public SettingsData()
     {
-        StartPlayList=a; StartSong=b;
+        
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using Assets.scripts;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ public class SettingsMenu : MonoBehaviour
     public SoundsController SounderController;
     public AudioSource Sounder;
     public ControllerManager ControllerManager;
+    public static SettingsData data = SettingsCore.ReadSettings();
+    public CommonSettings CommonSettings;
+
     public void EnableCommon()
     {
 
@@ -32,6 +36,9 @@ public class SettingsMenu : MonoBehaviour
     }
     public void SetDefault()
     {
+       // SettingsCore.WriteSettingsTo(SettingsCore.ReadDefaultSettings(), PathCore.SettingsFilePath);
+        SettingsCore.SetSettings(SettingsCore.ReadDefaultSettings());
+        CommonSettings.UpdateValues();
     }
 
     public void Quit()
@@ -44,6 +51,7 @@ public class SettingsMenu : MonoBehaviour
 
     public void Save()
     {
-
+        SettingsCore.WriteSettingsTo(data, PathCore.SettingsFilePath);
+        SettingsCore.SetSettings(SettingsCore.ReadSettings());
     }
 }

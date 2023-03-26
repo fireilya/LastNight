@@ -52,6 +52,8 @@ namespace Assets.scripts
             SettingsMenu.data=data;
             MusicCore.startPlayList = data.StartPlayList;
             MusicCore.startSong = data.StartSong;
+            PathCore.MusicDirectoryPath = data.MusicPath;
+            MusicCore.windowSize = data.CacheWindowSize;
         }
     }
 }

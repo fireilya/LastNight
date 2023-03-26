@@ -11,6 +11,8 @@ public class CommonSettings : MonoBehaviour
 {
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
+    public TMP_InputField MusicPath;
+    public TMP_InputField MusicCacheSize;
     void Start()
     {
         StartPlaylist.ClearOptions();
@@ -20,6 +22,25 @@ public class CommonSettings : MonoBehaviour
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
         StartSong.SetValueWithoutNotify(Array.IndexOf(
             MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
+        MusicPath.text = PathCore.MusicDirectoryPath;
+        MusicCacheSize.text = MusicCore.windowSize.ToString();
+    }
+
+    public void SetMusicDirectory()
+    {
+        SettingsMenu.data.MusicPath= MusicPath.text;
+    }
+
+    public void SetMusicCache()
+    {
+        var cache=MusicCacheSize.text;
+        var cacheWindowSize = 0;
+        if (int.TryParse(cache, out cacheWindowSize) && cacheWindowSize>0)
+        {
+            SettingsMenu.data.CacheWindowSize=cacheWindowSize;
+            return;
+        }
+        MusicCacheSize.text = MusicCore.windowSize.ToString();
     }
 
     public void SetStartPlayList()
@@ -40,6 +61,8 @@ public class CommonSettings : MonoBehaviour
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        MusicPath.text = PathCore.MusicDirectoryPath;
+        MusicCacheSize.text=MusicCore.windowSize.ToString();
     }
 
     

@@ -9,6 +9,8 @@ public class SettingsData
 {
     public string StartPlayList;
     public string StartSong;
+    public string MusicPath;
+    public int CacheWindowSize;
 
     public SettingsData()
     {

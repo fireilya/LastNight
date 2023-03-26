@@ -18,23 +18,20 @@ namespace Assets.scripts
     public class LoadInitializer : MonoBehaviour
     {
         private BackgroundWorker backgroundInitializator=new();
-        public TextMeshProUGUI message;
+        public TMP_Text message;
 
         async void Awake()
         {
-
-            //backgroundInitializator.RunWorkerAsync(StartCoroutine(Initialize()));
+            message.text = "Создаю резервную копию";
+            DefaultSettings.CreateDefaultSettings();
+            message.text = "Просматриваю музыку";
             MusicCore.ReadNamesOfMusic();
+            message.text = "Читаю настройки";
+            SettingsCore.SetSettings(SettingsCore.ReadSettings());
+            message.text = "Инициализирую музыку";
             await MusicCore.LoadStartSong();
+            message.text = "Загружаю меню";
             SceneManager.LoadScene(1);
         }
-
-        //private IEnumerator Initialize()
-        //{
-        //    message.text = "Инициализирую музыку";
-        //    yield return StartCoroutine(MusicCore.InitializeMusic());
-        //    message.text = "Загружаю сцену";
-        //    SceneManager.LoadScene(1);
-        //}
     }
 }

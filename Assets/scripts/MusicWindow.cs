@@ -60,7 +60,7 @@ namespace Assets.scripts
 
         public async void ShiftRight()
         {
-            if (CurrentIndex<Size / 2)
+            if (CurrentIndex<Size / 2 && CurrentNode.Next is not null)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
@@ -90,7 +90,7 @@ namespace Assets.scripts
 
         public async void ShiftLeft()
         {
-            if (CurrentIndex > Size/2)
+            if (CurrentIndex > Size/2 && CurrentNode.Previous is not null)
             {
                 CurrentIndex--;
                 CurrentNode= CurrentNode.Previous;

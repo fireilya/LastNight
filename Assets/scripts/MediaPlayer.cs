@@ -7,7 +7,7 @@ public class MediaPlayer : MonoBehaviour
 {
     public VideoPlayer VideoPlayer;
     public GameObject Fill;
-    public static bool isStarted;
+    public static bool IsStarted;
     void Start()
     {
         
@@ -18,9 +18,9 @@ public class MediaPlayer : MonoBehaviour
     {
         if (VideoPlayer.isPlaying)
         {
-            isStarted = true;
+            IsStarted = true;
         }
-        if (!VideoPlayer.isPlaying && isStarted || Input.anyKeyDown)
+        if (!VideoPlayer.isPlaying && IsStarted || Input.anyKeyDown)
         {
             Fill.SetActive(false);
             VideoPlayer.gameObject.SetActive(false);

@@ -24,10 +24,10 @@ namespace Assets.scripts
         {
             message.text = "Создаю резервную копию";
             DefaultSettings.CreateDefaultSettings();
-            message.text = "Просматриваю музыку";
-            MusicCore.ReadNamesOfMusic();
             message.text = "Читаю настройки";
             SettingsCore.SetSettings(SettingsCore.ReadSettings());
+            message.text = "Просматриваю музыку";
+            MusicCore.ReadNamesOfMusic();
             message.text = "Инициализирую музыку";
             await MusicCore.LoadStartSong();
             message.text = "Загружаю меню";

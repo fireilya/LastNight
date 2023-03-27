@@ -61,6 +61,10 @@ public class SettingsMenu : MonoBehaviour
 
     public void Quit()
     {
+        if (SettingsCore.ReadSettings() != data)
+        {
+            Debug.Log("Looser!");
+        }
         SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
         CameraAnimator.SetBool("IsEnableSettings", false);
         ControllerManager.StopClock();

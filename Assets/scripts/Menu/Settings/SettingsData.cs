@@ -14,8 +14,23 @@ public class SettingsData
     public float GlobalMusicVolume;
     public float GlobalSoundVolume;
 
-    public SettingsData()
+    public static bool operator == (SettingsData x, SettingsData y)
     {
-        
+        return x.StartSong == y.StartSong
+               && x.StartPlayList == y.StartPlayList
+               && x.MusicPath == y.MusicPath
+               && x.CacheWindowSize == y.CacheWindowSize
+               && x.GlobalMusicVolume == y.GlobalMusicVolume
+               && x.GlobalSoundVolume == y.GlobalSoundVolume;
+    }
+
+    public static bool operator !=(SettingsData x, SettingsData y)
+    {
+        return !(x.StartSong == y.StartSong
+                 && x.StartPlayList == y.StartPlayList
+                 && x.MusicPath == y.MusicPath
+                 && x.CacheWindowSize == y.CacheWindowSize
+                 && x.GlobalMusicVolume == y.GlobalMusicVolume
+                 && x.GlobalSoundVolume == y.GlobalSoundVolume);
     }
 }

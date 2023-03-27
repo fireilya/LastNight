@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,21 +49,27 @@ namespace Assets.scripts
 
         public static void StopMusic(AudioSource source)
         {
+            IsStarted=false;
             musicWindow.CurrentNode = musicWindow.FirstNode;
             source.Stop();
         }
 
         public static void ReadNamesOfMusic()
         {
+            PlayListNaming=new List<string>();
+            MusicNameInPlaylists=new Dictionary<string, string[]>();
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var directoryPlayLists = musicDirectory.GetDirectories();
             foreach (var playlist in directoryPlayLists)
             {
-                PlayListNaming.Add(playlist.Name);
                 var music = playlist.GetFiles("*.ogg", SearchOption.TopDirectoryOnly)
                     .Union(playlist.GetFiles("*.mp3", SearchOption.TopDirectoryOnly)
                         .Union(playlist.GetFiles("*.wav", SearchOption.TopDirectoryOnly)))
                     .ToArray();
+                if (music.Length != 0) 
+                {
+                    PlayListNaming.Add(playlist.Name);
+                }
                 var musicNames = new string[music.Length];
                 for (var i = 0; i < music.Length; i++) musicNames[i] = music[i].Name;
                 MusicNameInPlaylists[playlist.Name] = musicNames;
@@ -120,14 +127,21 @@ namespace Assets.scripts
                                                              + clip.Name, AudioType.MPEG);
             url.SendWebRequest();
             while (!url.isDone) await Task.Yield();
-            var audioClip = DownloadHandlerAudioClip.GetContent(url);
-            audioClip.name = clip.Name;
-            return audioClip;
+            try
+            {
+                var audioClip = DownloadHandlerAudioClip.GetContent(url);
+                audioClip.name = clip.Name;
+                return audioClip;
+            }
+            catch (Exception)
+            {
+                throw new Exception($"InvalidClip{clip.Name}");
+            }
+           
         }
 
         public static async Task FillWindow()
         {
-            musicWindow.Clear();
             for (var i = 0; i <= musicWindow.Size; i++)
             {
                 if (rightEdgeSong == musicFromCurrentPlaylist.Length) break;

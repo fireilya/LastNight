@@ -27,7 +27,7 @@ namespace Assets.scripts
         public static string startSong = "Angliya-Skazochniy Mir.mp3";
         public static string startPlayList = "menu";
         private static MusicWindow musicWindow;
-        public static int windowSize = 9;
+        public static int WindowSize = 9;
         private static int rightEdgeSong;
         private static int leftEdgeSong;
 
@@ -110,7 +110,7 @@ namespace Assets.scripts
                     playlistToSet = playlist;
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            musicWindow = new MusicWindow(windowSize, musicFromCurrentPlaylist.Length);
+            musicWindow = new MusicWindow(WindowSize*2+1, musicFromCurrentPlaylist.Length);
             rightEdgeSong = 0;
             leftEdgeSong = 0;
             await FillWindow();

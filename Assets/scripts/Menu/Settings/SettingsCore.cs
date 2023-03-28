@@ -53,7 +53,7 @@ namespace Assets.scripts
             MusicCore.startPlayList = data.StartPlayList;
             MusicCore.startSong = data.StartSong;
             PathCore.MusicDirectoryPath = data.MusicPath;
-            MusicCore.windowSize = data.CacheWindowSize;
+            MusicCore.WindowSize = data.CacheWindowSize;
             MixerController.SoundVolume = data.GlobalSoundVolume;
             MixerController.MusicVolume = data.GlobalMusicVolume;
         }

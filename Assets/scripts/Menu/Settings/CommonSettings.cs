@@ -26,7 +26,7 @@ public class CommonSettings : MonoBehaviour, IResetable
         StartSong.SetValueWithoutNotify(Array.IndexOf(
             MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
         MusicPath.text = PathCore.MusicDirectoryPath;
-        MusicCacheSize.text = MusicCore.windowSize.ToString();
+        MusicCacheSize.text = MusicCore.WindowSize.ToString();
     }
 
     public void SetMusicDirectory()
@@ -43,7 +43,7 @@ public class CommonSettings : MonoBehaviour, IResetable
             SettingsMenu.data.CacheWindowSize=cacheWindowSize;
             return;
         }
-        MusicCacheSize.text = MusicCore.windowSize.ToString();
+        MusicCacheSize.text = MusicCore.WindowSize.ToString();
     }
 
     public void SetStartPlayList()
@@ -87,7 +87,7 @@ public class CommonSettings : MonoBehaviour, IResetable
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
         MusicPath.text = PathCore.MusicDirectoryPath;
-        MusicCacheSize.text=MusicCore.windowSize.ToString();
+        MusicCacheSize.text=MusicCore.WindowSize.ToString();
     }
 
     

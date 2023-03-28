@@ -20,6 +20,7 @@ public class SettingsMenu : MonoBehaviour
     public static SettingsData data = SettingsCore.ReadSettings();
     public CommonSettings CommonSettings;
     public SoundSettings SoundSettings;
+    public GameObject UnsaveWarning;
 
     public void EnableCommon()
     {
@@ -55,25 +56,44 @@ public class SettingsMenu : MonoBehaviour
     public void SetDefault()
     {
         SettingsCore.SetSettings(SettingsCore.ReadDefaultSettings());
-        CommonSettings.UpdateValues();
-        SoundSettings.UpdateValues();
+        UpdateSettingsValues();
+    }
+
+    public void TryQuit()
+    {
+        if (SettingsCore.ReadSettings() != data)
+        {
+            UnsaveWarning.SetActive(true);
+        }
+        else
+        {
+            Quit();
+        }
     }
 
     public void Quit()
     {
-        if (SettingsCore.ReadSettings() != data)
-        {
-            Debug.Log("Looser!");
-        }
+        SettingsCore.SetSettings(SettingsCore.ReadSettings());
         SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
         CameraAnimator.SetBool("IsEnableSettings", false);
         ControllerManager.StopClock();
+        UpdateSettingsValues();
     }
 
+    public void Cancel()
+    {
+        UnsaveWarning.SetActive(false);
+    }
 
     public void Save()
     {
         SettingsCore.WriteSettingsTo(data, PathCore.SettingsFilePath);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
+    }
+
+    private void UpdateSettingsValues()
+    {
+        CommonSettings.UpdateValues();
+        SoundSettings.UpdateValues();
     }
 }

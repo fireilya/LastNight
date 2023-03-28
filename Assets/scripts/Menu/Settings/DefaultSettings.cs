@@ -18,6 +18,9 @@ namespace Assets.scripts
             data.CacheWindowSize = 9;
             data.GlobalMusicVolume = 100f;
             data.GlobalSoundVolume = 1f;
+            data.ResolutionWidth = Screen.currentResolution.width;
+            data.ResolutionHeight = Screen.currentResolution.height;
+            data.IsFullScreen=true;
             SettingsCore.WriteSettingsTo(data, PathCore.DefaultSettingsFilePath);
         }
     }

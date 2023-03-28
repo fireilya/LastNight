@@ -22,15 +22,15 @@ namespace Assets.scripts
 
         async void Awake()
         {
-            message.text = "Создаю резервную копию";
+            message.text = "Создаю резервную копию...";
             DefaultSettings.CreateDefaultSettings();
-            message.text = "Читаю настройки";
+            message.text = "Читаю настройки...";
             SettingsCore.SetSettings(SettingsCore.ReadSettings());
-            message.text = "Просматриваю музыку";
+            message.text = "Читаю музыку...";
             MusicCore.ReadNamesOfMusic();
-            message.text = "Инициализирую музыку";
+            message.text = "Инициализирую музыку...";
             await MusicCore.LoadStartSong();
-            message.text = "Загружаю меню";
+            message.text = "Загружаю меню...";
             SceneManager.LoadScene(1);
         }
     }

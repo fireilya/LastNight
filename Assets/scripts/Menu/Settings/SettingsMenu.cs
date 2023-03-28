@@ -20,6 +20,7 @@ public class SettingsMenu : MonoBehaviour
     public static SettingsData data = SettingsCore.ReadSettings();
     public CommonSettings CommonSettings;
     public SoundSettings SoundSettings;
+    public GraphicsSettings GraphicsSettings;
     public GameObject UnsaveWarning;
 
     public void EnableCommon()
@@ -73,6 +74,7 @@ public class SettingsMenu : MonoBehaviour
 
     public void Quit()
     {
+        UnsaveWarning.SetActive(false);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
         SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
         CameraAnimator.SetBool("IsEnableSettings", false);
@@ -95,5 +97,6 @@ public class SettingsMenu : MonoBehaviour
     {
         CommonSettings.UpdateValues();
         SoundSettings.UpdateValues();
+        GraphicsSettings.UpdateValues();
     }
 }

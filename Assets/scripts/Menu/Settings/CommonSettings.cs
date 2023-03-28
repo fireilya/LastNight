@@ -19,10 +19,9 @@ public class CommonSettings : MonoBehaviour, IResetable
     void Start()
     {
         StartPlaylist.ClearOptions();
-        StartSong.ClearOptions();
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
-        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        UpdateSongsDropdown();
         StartSong.SetValueWithoutNotify(Array.IndexOf(
             MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
         MusicPath.text = PathCore.MusicDirectoryPath;
@@ -49,8 +48,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     public void SetStartPlayList()
     {
         SettingsMenu.data.StartPlayList = MusicCore.PlayListNaming[StartPlaylist.value];
-        StartSong.ClearOptions();
-        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        UpdateSongsDropdown();
     }
 
     public void SetStartSong()
@@ -63,14 +61,15 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         PathCore.MusicDirectoryPath=MusicPath.text;
         StartPlaylist.ClearOptions();
-        StartSong.ClearOptions();
         MusicCore.ReadNamesOfMusic();
         var music=
         WarningMessage.text = MusicCore.MusicNameInPlaylists.Select(x => x.Value.Length).All(x => x == 0) 
             ? "Ќе найдено музыки в текущей аудитории!" 
             : "";
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
-        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        UpdateSongsDropdown();
+        SetStartPlayList();
+        SetStartSong();
     }
 
     public async void UpdateMusic()
@@ -84,10 +83,15 @@ public class CommonSettings : MonoBehaviour, IResetable
     public void UpdateValues()
     {
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
-        StartSong.ClearOptions();
-        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        UpdateSongsDropdown();
         MusicPath.text = PathCore.MusicDirectoryPath;
         MusicCacheSize.text=MusicCore.WindowSize.ToString();
+    }
+
+    private void UpdateSongsDropdown()
+    {
+        StartSong.ClearOptions();
+        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
     }
 
     

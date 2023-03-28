@@ -13,6 +13,9 @@ public class SettingsData
     public int CacheWindowSize;
     public float GlobalMusicVolume;
     public float GlobalSoundVolume;
+    public bool IsFullScreen;
+    public int ResolutionWidth;
+    public int ResolutionHeight;
 
     public static bool operator == (SettingsData x, SettingsData y)
     {
@@ -21,7 +24,9 @@ public class SettingsData
                && x.MusicPath == y.MusicPath
                && x.CacheWindowSize == y.CacheWindowSize
                && x.GlobalMusicVolume == y.GlobalMusicVolume
-               && x.GlobalSoundVolume == y.GlobalSoundVolume;
+               && x.GlobalSoundVolume == y.GlobalSoundVolume
+               && x.IsFullScreen==y.IsFullScreen
+               &&(x.ResolutionHeight==y.ResolutionHeight && x.ResolutionWidth==y.ResolutionWidth);
     }
 
     public static bool operator !=(SettingsData x, SettingsData y)
@@ -31,6 +36,8 @@ public class SettingsData
                  && x.MusicPath == y.MusicPath
                  && x.CacheWindowSize == y.CacheWindowSize
                  && x.GlobalMusicVolume == y.GlobalMusicVolume
-                 && x.GlobalSoundVolume == y.GlobalSoundVolume);
+                 && x.GlobalSoundVolume == y.GlobalSoundVolume
+                 && x.IsFullScreen == y.IsFullScreen
+                 && (x.ResolutionHeight == y.ResolutionHeight && x.ResolutionWidth == y.ResolutionWidth));
     }
 }

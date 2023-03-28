@@ -15,6 +15,7 @@ namespace Assets.scripts
         {
             using var stream = new FileStream(path, FileMode.Create);
             formatter.Serialize(stream, dataToSave);
+            stream.Close();
         }
 
         public static SettingsData ReadSettings()

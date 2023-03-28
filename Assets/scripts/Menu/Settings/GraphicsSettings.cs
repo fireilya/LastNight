@@ -15,8 +15,11 @@ public class GraphicsSettings : MonoBehaviour, IResetable
 
     public void UpdateValues()
     {
+        var x = ResolutionDropdown;
+        var y = resolutionList;
+        var z = SettingsMenu.data;
         ResolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),
-            $"{SettingsMenu.data.ResolutionWidth} X {SettingsMenu.data.ResolutionHeight}"));
+            $"{SettingsMenu.data.ResolutionWidth}X{SettingsMenu.data.ResolutionHeight}"));
         FullScreen.isOn = SettingsMenu.data.IsFullScreen;
         UpdateScreen();
     }

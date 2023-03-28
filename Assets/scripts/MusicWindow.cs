@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.scripts
@@ -48,6 +49,7 @@ namespace Assets.scripts
             if (LastNode is null)
             {
                 LastNode = newNode;
+                CurrentNode= newNode;
                 return;
             }
 
@@ -58,66 +60,65 @@ namespace Assets.scripts
 
         public void AddFirst(AudioClip clip)
         {
+            WindowRange.Start--;
             var newNode = new Node(clip);
             newNode.Next = FirstNode;
+            FirstNode ??= newNode;
+            if (LastNode is null)
+            {
+                LastNode = newNode;
+                CurrentNode = newNode;
+                return;
+            }
             FirstNode.Previous = newNode;
             FirstNode = newNode;
         }
 
-        public void Clear()
+        public async Task Next()
         {
-            FirstNode = null;
-            LastNode = null;
-            WindowRange.Start = 0;
-            WindowRange.End = 0;
-        }
-
-
-        public async void ShiftRight()
-        {
-            if (CurrentIndex < Size / 2 && CurrentNode.Next is not null)
+            if (CurrentIndex > Size / 2 && WindowRange.End + 1 != arrayLength) await NormalizeWindow();
+            if (CurrentIndex < Size / 2 || CurrentNode.Next is not null)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
+                return;
             }
-            else
+            if (CurrentNode.Next is not null && WindowRange.End + 1 != arrayLength)
             {
-                if (CurrentIndex > Size / 2) NormalizeWindow();
-                if (CurrentNode.Next is not null)
-                {
-                    CurrentNode = CurrentNode.Next;
-                }
-                else
-                {
-                    await MusicCore.FillWindow();
-                    return;
-                }
-
-                if (WindowRange.End + 1 == arrayLength) return;
-                AddLast(await MusicCore.DownloadNextSong(true));
-                WindowRange.Start++;
-                FirstNode = FirstNode.Next;
+                CurrentNode = CurrentNode.Next;
+                await ShiftRight();
+                return;
             }
+            await MusicCore.FillWindow();
         }
 
-        public async void ShiftLeft()
+        public async Task Previous()
         {
-            if (CurrentIndex > Size / 2 && CurrentNode.Previous is not null)
+            if (CurrentIndex < Size / 2 && WindowRange.Start != 0) await NormalizeWindow();
+            if (CurrentIndex > Size / 2 || CurrentNode.Previous is not null)
             {
-                CurrentIndex--;
                 CurrentNode = CurrentNode.Previous;
+                CurrentIndex--;
+                return;
             }
-            else
-            {
-                if (CurrentIndex < Size / 2) NormalizeWindow();
-                if (CurrentNode.Previous is not null) CurrentNode = CurrentNode.Previous;
 
-                if (WindowRange.Start - 1 < 0) return;
-                WindowRange.Start--;
-                WindowRange.End--;
-                AddFirst(await MusicCore.DownloadNextSong(false));
-                LastNode = LastNode.Previous;
-            }
+            if (CurrentNode.Previous is null || WindowRange.Start == 0) return;
+            CurrentNode = CurrentNode.Previous;
+            await ShiftLeft();
+        }
+
+        private async Task ShiftLeft()
+        {
+            AddFirst(await MusicCore.DownloadNextSong(false));
+            LastNode = LastNode.Previous;
+            WindowRange.End--;
+        }
+
+        private async Task ShiftRight()
+        {
+            AddLast(await MusicCore.DownloadNextSong(true));
+            WindowRange.Start++;
+            FirstNode = FirstNode.Next;
         }
 
         public void SetOutToIndex(int index)
@@ -131,19 +132,17 @@ namespace Assets.scripts
             }
         }
 
-        private void NormalizeWindow()
+        private async Task NormalizeWindow()
         {
             while (CurrentIndex < Size / 2 && WindowRange.Start != 0)
             {
-                WindowRange.Start--;
-                WindowRange.End--;
+                await ShiftLeft();
                 CurrentIndex++;
             }
 
-            while (CurrentIndex > Size / 2 && WindowRange.End != arrayLength)
+            while (CurrentIndex > Size / 2 && WindowRange.End+1 != arrayLength)
             {
-                WindowRange.End++;
-                WindowRange.Start++;
+                await ShiftRight();
                 CurrentIndex--;
             }
         }

@@ -31,6 +31,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
     private const float CommonWait = 0.5f;
     private const float MoveWait = 2.8f;
     private bool _isPaused = false;
+    public static bool IsMoved;
     public void OnPointerClick(PointerEventData eventData)
     {
         var rayCaster = MainCamera.ScreenPointToRay(Input.mousePosition);

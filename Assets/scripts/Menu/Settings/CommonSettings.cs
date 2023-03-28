@@ -18,6 +18,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         UpdateSongsDropdown();
+        StartSong.SetValueWithoutNotify(Array.IndexOf(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
         MusicPath.text = PathCore.MusicDirectoryPath;
         MusicCacheSize.text = MusicCore.WindowSize.ToString();
     }

@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Assets.scripts
+﻿namespace Assets.scripts
 {
     public struct Range
     {

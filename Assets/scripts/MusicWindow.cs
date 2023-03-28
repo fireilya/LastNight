@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.scripts
 {
     public class MusicWindow : IEnumerable<AudioClip>
     {
+        private readonly int arrayLength;
+        private int CurrentIndex;
+        public Range WindowRange;
+
         public MusicWindow(int size, int arrayLength)
         {
             FirstNode = null;
@@ -15,15 +17,28 @@ namespace Assets.scripts
             CurrentNode = null;
             Size = size;
             WindowRange = new Range(0, 0);
-            this.arrayLength= arrayLength;
+            this.arrayLength = arrayLength;
         }
+
         public Node FirstNode { get; private set; }
         public Node LastNode { get; private set; }
-        public Range WindowRange;
         public int Size { get; set; }
         public Node CurrentNode { get; set; }
-        private int CurrentIndex;
-        private int arrayLength;
+
+        public IEnumerator<AudioClip> GetEnumerator()
+        {
+            var current = FirstNode;
+            while (current is not null)
+            {
+                yield return current.Value;
+                current = current.Next;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         public void AddLast(AudioClip clip)
         {
@@ -60,17 +75,14 @@ namespace Assets.scripts
 
         public async void ShiftRight()
         {
-            if (CurrentIndex<Size / 2 && CurrentNode.Next is not null)
+            if (CurrentIndex < Size / 2 && CurrentNode.Next is not null)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
             }
             else
             {
-                if (CurrentIndex> Size / 2)
-                {
-                    NormalizeWindow();
-                }
+                if (CurrentIndex > Size / 2) NormalizeWindow();
                 if (CurrentNode.Next is not null)
                 {
                     CurrentNode = CurrentNode.Next;
@@ -90,21 +102,15 @@ namespace Assets.scripts
 
         public async void ShiftLeft()
         {
-            if (CurrentIndex > Size/2 && CurrentNode.Previous is not null)
+            if (CurrentIndex > Size / 2 && CurrentNode.Previous is not null)
             {
                 CurrentIndex--;
-                CurrentNode= CurrentNode.Previous;
+                CurrentNode = CurrentNode.Previous;
             }
             else
             {
-                if (CurrentIndex<Size/2)
-                {
-                    NormalizeWindow();
-                }
-                if (CurrentNode.Previous is not null)
-                {
-                    CurrentNode = CurrentNode.Previous;
-                }
+                if (CurrentIndex < Size / 2) NormalizeWindow();
+                if (CurrentNode.Previous is not null) CurrentNode = CurrentNode.Previous;
 
                 if (WindowRange.Start - 1 < 0) return;
                 WindowRange.Start--;
@@ -114,26 +120,11 @@ namespace Assets.scripts
             }
         }
 
-        public IEnumerator<AudioClip> GetEnumerator()
-        {
-            var current = FirstNode;
-            while (current is not null)
-            {
-                yield return current.Value;
-                current = current.Next;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         public void SetOutToIndex(int index)
         {
             CurrentIndex = 0;
             CurrentNode = FirstNode;
-            while (CurrentIndex!=index && CurrentNode.Next is not null)
+            while (CurrentIndex != index && CurrentNode.Next is not null)
             {
                 CurrentNode = CurrentNode.Next;
                 CurrentIndex++;
@@ -149,7 +140,7 @@ namespace Assets.scripts
                 CurrentIndex++;
             }
 
-            while (CurrentIndex> Size / 2 && WindowRange.End!=arrayLength)
+            while (CurrentIndex > Size / 2 && WindowRange.End != arrayLength)
             {
                 WindowRange.End++;
                 WindowRange.Start++;

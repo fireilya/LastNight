@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Assets.scripts.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +6,14 @@ public class SoundSettings : MonoBehaviour, IResetable
 {
     public Slider MusicVolume;
     public Slider SoundVolume;
-    void Start()
+
+    public void UpdateValues()
+    {
+        MusicVolume.value = MixerController.MusicVolume;
+        SoundVolume.value = MixerController.SoundVolume;
+    }
+
+    private void Start()
     {
         MusicVolume.value = MixerController.MusicVolume;
         SoundVolume.value = MixerController.SoundVolume;
@@ -16,8 +21,8 @@ public class SoundSettings : MonoBehaviour, IResetable
 
     public void SetMusicVolume()
     {
-        MixerController.MusicVolume=MusicVolume.value;
-        SettingsMenu.data.GlobalMusicVolume=MusicVolume.value;
+        MixerController.MusicVolume = MusicVolume.value;
+        SettingsMenu.data.GlobalMusicVolume = MusicVolume.value;
     }
 
     public void SetSoundsVolume()
@@ -25,11 +30,4 @@ public class SoundSettings : MonoBehaviour, IResetable
         MixerController.SoundVolume = SoundVolume.value;
         SettingsMenu.data.GlobalSoundVolume = SoundVolume.value;
     }
-
-    public void UpdateValues()
-    {
-        MusicVolume.value=MixerController.MusicVolume;
-        SoundVolume.value = MixerController.SoundVolume;
-    }
-
 }

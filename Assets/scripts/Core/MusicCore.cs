@@ -49,15 +49,15 @@ namespace Assets.scripts
 
         public static void StopMusic(AudioSource source)
         {
-            IsStarted=false;
+            IsStarted = false;
             musicWindow.CurrentNode = musicWindow.FirstNode;
             source.Stop();
         }
 
         public static void ReadNamesOfMusic()
         {
-            PlayListNaming=new List<string>();
-            MusicNameInPlaylists=new Dictionary<string, string[]>();
+            PlayListNaming = new List<string>();
+            MusicNameInPlaylists = new Dictionary<string, string[]>();
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var directoryPlayLists = musicDirectory.GetDirectories();
             foreach (var playlist in directoryPlayLists)
@@ -66,10 +66,7 @@ namespace Assets.scripts
                     .Union(playlist.GetFiles("*.mp3", SearchOption.TopDirectoryOnly)
                         .Union(playlist.GetFiles("*.wav", SearchOption.TopDirectoryOnly)))
                     .ToArray();
-                if (music.Length != 0) 
-                {
-                    PlayListNaming.Add(playlist.Name);
-                }
+                if (music.Length != 0) PlayListNaming.Add(playlist.Name);
                 var musicNames = new string[music.Length];
                 for (var i = 0; i < music.Length; i++) musicNames[i] = music[i].Name;
                 MusicNameInPlaylists[playlist.Name] = musicNames;
@@ -110,7 +107,7 @@ namespace Assets.scripts
                     playlistToSet = playlist;
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            musicWindow = new MusicWindow(WindowSize*2+1, musicFromCurrentPlaylist.Length);
+            musicWindow = new MusicWindow(WindowSize * 2 + 1, musicFromCurrentPlaylist.Length);
             rightEdgeSong = 0;
             leftEdgeSong = 0;
             await FillWindow();
@@ -119,11 +116,11 @@ namespace Assets.scripts
         public static async Task<AudioClip> DownloadNextSong(bool isRight)
         {
             var clip = musicFromCurrentPlaylist[isRight ? rightEdgeSong++ : leftEdgeSong++];
-            var url = UnityWebRequestMultimedia.GetAudioClip("file:///" 
-                                                             + PathCore.MusicDirectoryPath 
-                                                             + "/" 
-                                                             + CurrentPlayList.Name 
-                                                             + "/" 
+            var url = UnityWebRequestMultimedia.GetAudioClip("file:///"
+                                                             + PathCore.MusicDirectoryPath
+                                                             + "/"
+                                                             + CurrentPlayList.Name
+                                                             + "/"
                                                              + clip.Name, AudioType.MPEG);
             url.SendWebRequest();
             while (!url.isDone) await Task.Yield();
@@ -137,7 +134,6 @@ namespace Assets.scripts
             {
                 throw new Exception($"InvalidClip{clip.Name}");
             }
-           
         }
 
         public static async Task FillWindow()

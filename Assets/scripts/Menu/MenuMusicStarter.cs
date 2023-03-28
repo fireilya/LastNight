@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace Assets.scripts
 {
-    class MenuMusicStarter:MonoBehaviour
+    internal class MenuMusicStarter : MonoBehaviour
     {
         public MagnitophoneController Magnitophone;
-        void Awake()
+
+        private void Awake()
         {
             StartCoroutine(Starter());
         }
 
-        IEnumerator Starter()
+        private IEnumerator Starter()
         {
-            while (!MediaPlayer.IsStarted)
-            {
-                yield return null;
-            }
+            while (!MediaPlayer.IsStarted) yield return null;
             yield return StartCoroutine(Magnitophone.PressPlayButton());
         }
     }

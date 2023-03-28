@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Assets.scripts;
 using UnityEngine;
 
 public class ControllerManager : MonoBehaviour
@@ -9,7 +6,7 @@ public class ControllerManager : MonoBehaviour
 
     public void StartClock()
     {
-        ClockController.IsWalking=true;
+        ClockController.IsWalking = true;
         StartCoroutine(ClockController.ClockWalk());
     }
 
@@ -18,4 +15,3 @@ public class ControllerManager : MonoBehaviour
         ClockController.IsWalking = false;
     }
 }
-

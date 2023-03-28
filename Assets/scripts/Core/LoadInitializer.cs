@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Assets.scripts
 {
     public class LoadInitializer : MonoBehaviour
     {
-        private BackgroundWorker backgroundInitializator=new();
+        private BackgroundWorker backgroundInitializator = new();
         public TMP_Text message;
 
-        async void Awake()
+        private async void Awake()
         {
             message.text = "Создаю резервную копию...";
             DefaultSettings.CreateDefaultSettings();

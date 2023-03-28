@@ -1,26 +1,22 @@
-using System;
 using Assets.scripts;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 public class SettingsMenu : MonoBehaviour
 {
-    public GameObject Menu;
-    public GameObject Settings;
-    public GameObject Common;
-    public GameObject Movement;
-    public GameObject Graphics;
-    public GameObject Sound;
-    public Animator CameraAnimator;
-    public SoundsController SounderController;
-    public AudioSource Sounder;
-    public ControllerManager ControllerManager;
     public static SettingsData data = SettingsCore.ReadSettings();
+    public Animator CameraAnimator;
+    public GameObject Common;
     public CommonSettings CommonSettings;
-    public SoundSettings SoundSettings;
+    public ControllerManager ControllerManager;
+    public GameObject Graphics;
     public GraphicsSettings GraphicsSettings;
+    public GameObject Menu;
+    public GameObject Movement;
+    public GameObject Settings;
+    public GameObject Sound;
+    public AudioSource Sounder;
+    public SoundsController SounderController;
+    public SoundSettings SoundSettings;
     public GameObject UnsaveWarning;
 
     public void EnableCommon()
@@ -54,6 +50,7 @@ public class SettingsMenu : MonoBehaviour
         Common.SetActive(false);
         Sound.SetActive(true);
     }
+
     public void SetDefault()
     {
         SettingsCore.SetSettings(SettingsCore.ReadDefaultSettings());
@@ -63,13 +60,9 @@ public class SettingsMenu : MonoBehaviour
     public void TryQuit()
     {
         if (SettingsCore.ReadSettings() != data)
-        {
             UnsaveWarning.SetActive(true);
-        }
         else
-        {
             Quit();
-        }
     }
 
     public void Quit()

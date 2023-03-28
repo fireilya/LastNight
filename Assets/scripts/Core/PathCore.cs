@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.scripts
 {
@@ -13,6 +8,5 @@ namespace Assets.scripts
         public static string SettingsFilePath = Application.dataPath + @"/conf/CFG.fi";
         public static string DefaultSettingsFilePath = Application.dataPath + @"/conf/defCFG.fi";
         public static string PlayerSavePath = Application.dataPath + @"/Saves";
-
     }
 }

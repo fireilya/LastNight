@@ -1,22 +1,28 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Assets.scripts;
 using Assets.scripts.Interfaces;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CommonSettings : MonoBehaviour, IResetable
 {
+    public TMP_InputField MusicCacheSize;
+    public TMP_InputField MusicPath;
+    public AudioSource MusicSource;
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
-    public TMP_InputField MusicPath;
-    public TMP_InputField MusicCacheSize;
     public TMP_Text WarningMessage;
-    public AudioSource MusicSource;
-    void Start()
+
+    public void UpdateValues()
+    {
+        StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
+        UpdateSongsDropdown();
+        MusicPath.text = PathCore.MusicDirectoryPath;
+        MusicCacheSize.text = MusicCore.WindowSize.ToString();
+    }
+
+    private void Start()
     {
         StartPlaylist.ClearOptions();
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
@@ -30,18 +36,19 @@ public class CommonSettings : MonoBehaviour, IResetable
 
     public void SetMusicDirectory()
     {
-        SettingsMenu.data.MusicPath= MusicPath.text;
+        SettingsMenu.data.MusicPath = MusicPath.text;
     }
 
     public void SetMusicCache()
     {
-        var cache=MusicCacheSize.text;
+        var cache = MusicCacheSize.text;
         var cacheWindowSize = 0;
-        if (int.TryParse(cache, out cacheWindowSize) && cacheWindowSize>0)
+        if (int.TryParse(cache, out cacheWindowSize) && cacheWindowSize > 0)
         {
-            SettingsMenu.data.CacheWindowSize=cacheWindowSize;
+            SettingsMenu.data.CacheWindowSize = cacheWindowSize;
             return;
         }
+
         MusicCacheSize.text = MusicCore.WindowSize.ToString();
     }
 
@@ -59,13 +66,13 @@ public class CommonSettings : MonoBehaviour, IResetable
 
     public void ReadMusicPath()
     {
-        PathCore.MusicDirectoryPath=MusicPath.text;
+        PathCore.MusicDirectoryPath = MusicPath.text;
         StartPlaylist.ClearOptions();
         MusicCore.ReadNamesOfMusic();
-        var music=
-        WarningMessage.text = MusicCore.MusicNameInPlaylists.Select(x => x.Value.Length).All(x => x == 0) 
-            ? "Ќе найдено музыки в текущей аудитории!" 
-            : "";
+        var music =
+            WarningMessage.text = MusicCore.MusicNameInPlaylists.Select(x => x.Value.Length).All(x => x == 0)
+                ? "Ќе найдено музыки в текущей аудитории!"
+                : "";
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
         UpdateSongsDropdown();
         SetStartPlayList();
@@ -80,19 +87,9 @@ public class CommonSettings : MonoBehaviour, IResetable
         MusicCore.PlayMusic(MusicSource);
     }
 
-    public void UpdateValues()
-    {
-        StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
-        UpdateSongsDropdown();
-        MusicPath.text = PathCore.MusicDirectoryPath;
-        MusicCacheSize.text=MusicCore.WindowSize.ToString();
-    }
-
     private void UpdateSongsDropdown()
     {
         StartSong.ClearOptions();
         StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
     }
-
-    
 }

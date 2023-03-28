@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.Serialization;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 
 namespace Assets.scripts
 {
     public static class SettingsCore
     {
-        private static BinaryFormatter formatter = new();
+        private static readonly BinaryFormatter formatter = new();
         //public CommonSettings CommonSettings;
         //public GameObject CommonSettings;
         //public GameObject CommonSettings;
@@ -22,8 +13,7 @@ namespace Assets.scripts
 
         public static void WriteSettingsTo(SettingsData dataToSave, string path)
         {
-            
-            using var stream=new FileStream(path, FileMode.Create);
+            using var stream = new FileStream(path, FileMode.Create);
             formatter.Serialize(stream, dataToSave);
         }
 
@@ -36,7 +26,6 @@ namespace Assets.scripts
 
             stream.Close();
             return settings;
-
         }
 
         public static SettingsData ReadDefaultSettings()
@@ -49,7 +38,7 @@ namespace Assets.scripts
 
         public static void SetSettings(SettingsData data)
         {
-            SettingsMenu.data=data;
+            SettingsMenu.data = data;
             MusicCore.startPlayList = data.StartPlayList;
             MusicCore.startSong = data.StartSong;
             PathCore.MusicDirectoryPath = data.MusicPath;

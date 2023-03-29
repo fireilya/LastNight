@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Assets.scripts;
 using Assets.scripts.Interfaces;
 using TMPro;
@@ -84,7 +85,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         MusicCore.StopMusic(MusicSource);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
-        await MusicCore.LoadStartSong();
+        await Task.Run(MusicCore.LoadStartSong);
         MusicCore.PlayMusic(MusicSource);
     }
 

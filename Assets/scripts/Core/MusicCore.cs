@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -27,7 +30,7 @@ namespace Assets.scripts
         public static string startSong = "Angliya-Skazochniy Mir.mp3";
         public static string startPlayList = "menu";
         private static MusicWindow musicWindow;
-        public static int WindowSize = 9;
+        public static int WindowSize;
         private static int rightEdgeSong;
         private static int leftEdgeSong;
         public static bool IsReady;
@@ -50,11 +53,12 @@ namespace Assets.scripts
             if (playAfterMove) PlayMusic(source);
         }
 
-        public static void StopMusic(AudioSource source)
+        public static async void StopMusic(AudioSource source)
         {
-            IsStarted = false;
-            musicWindow.CurrentNode = musicWindow.FirstNode;
             source.Stop();
+            IsStarted = false;
+            await Task.Run(FillWindow);
+            //FillWindowBackground();
         }
 
         public static void ReadNamesOfMusic()
@@ -78,7 +82,8 @@ namespace Assets.scripts
 
         public static async Task LoadStartSong()
         {
-            await SetPlaylist(startPlayList);
+            await Task.Factory.StartNew(() => SetPlaylist(startPlayList));
+            Debug.Log("StartLoad");
             var index = 0;
             foreach (var clip in musicWindow)
             {
@@ -100,21 +105,26 @@ namespace Assets.scripts
             }
         }
 
-        public static async Task SetPlaylist(string playlistName)
+        public static async void SetPlaylist(string playlistName)  
         {
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var playlists = musicDirectory.GetDirectories();
             var playlistToSet = playlists[0];
             foreach (var playlist in playlists)
+            {
+                Debug.Log(playlist.Name);
                 if (playlist.Name == playlistName)
                 {
                     playlistToSet = playlist;
                     break;
                 }
+            }
 
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            await FillWindow();
+            Debug.Log("New");
+            var task = Task.Factory.StartNew(FillWindow, TaskCreationOptions.AttachedToParent);
+            task.
         }
 
         public static async Task<AudioClip> DownloadNextSong(bool isRight)
@@ -143,15 +153,18 @@ namespace Assets.scripts
             }
         }
 
-        public static async Task FillWindow()
+        public static async void FillWindow()
         {
+            musicWindow?.Dispose();
             musicWindow = new MusicWindow(WindowSize * 2 + 1, musicFromCurrentPlaylist.Length);
             rightEdgeSong = 0;
             leftEdgeSong = 0;
             for (var i = 0; i <= musicWindow.Size; i++)
             {
+                Debug.Log(i.ToString());
                 if (rightEdgeSong == musicFromCurrentPlaylist.Length) break;
-                musicWindow.AddLast(await DownloadNextSong(true));
+                await DownloadNextSong(true);
+                //musicWindow.AddLast(audioclipTask.Result);
             }
         }
     }

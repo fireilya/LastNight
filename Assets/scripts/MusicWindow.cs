@@ -1,11 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.scripts
 {
-    public class MusicWindow : IEnumerable<AudioClip>
+    public class MusicWindow : MonoBehaviour, IEnumerable<AudioClip>, IDisposable
     {
         private readonly int arrayLength;
         private int CurrentIndex;
@@ -89,7 +91,8 @@ namespace Assets.scripts
                 await ShiftRight();
                 return;
             }
-            await MusicCore.FillWindow();
+
+            await Task.Run(MusicCore.FillWindow);
         }
 
         public async Task Previous()
@@ -110,6 +113,7 @@ namespace Assets.scripts
         private async Task ShiftLeft()
         {
             AddFirst(await MusicCore.DownloadNextSong(false));
+            DestroyImmediate(LastNode.Value);
             LastNode = LastNode.Previous;
             WindowRange.End--;
         }
@@ -118,6 +122,7 @@ namespace Assets.scripts
         {
             AddLast(await MusicCore.DownloadNextSong(true));
             WindowRange.Start++;
+            DestroyImmediate(FirstNode.Value, false);
             FirstNode = FirstNode.Next;
         }
 
@@ -145,6 +150,22 @@ namespace Assets.scripts
                 await ShiftRight();
                 CurrentIndex--;
             }
+        }
+
+        public void Dispose()
+        {
+            if (CurrentNode is null)
+            {
+                return;
+            }
+            SetOutToIndex(0);
+            while (CurrentNode.Next is not null)
+            {
+                DestroyImmediate(CurrentNode.Value, false);
+                CurrentNode = CurrentNode.Next;
+            }
+            DestroyImmediate(CurrentNode.Value, false);
+            Debug.Log("Help!");
         }
     }
 

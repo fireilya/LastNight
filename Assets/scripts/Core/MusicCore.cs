@@ -29,27 +29,27 @@ namespace Assets.scripts
         public static List<string> PlayListNaming = new();
         public static string startSong = "Angliya-Skazochniy Mir.mp3";
         public static string startPlayList = "menu";
-        private static MusicWindow musicWindow;
-        public static int WindowSize;
-        private static int rightEdgeSong;
-        private static int leftEdgeSong;
+        private static int currentSongIndex;
+        private static AudioClip currentAudioClip;
         public static bool IsReady;
 
         public static void PlayMusic(AudioSource source)
         {
-            source.clip = musicWindow.CurrentNode.Value;
+            source.clip = currentAudioClip;
             source.Play();
             IsStarted = true;
         }
 
         public static async Task MoveMusic(bool isForward, bool playAfterMove, AudioSource source)
         {
-            IsReady = false;
             IsStarted = false;
             if (isForward)
-                await musicWindow.Next();
+            {
+                currentSongIndex %= musicFromCurrentPlaylist.Length;
+            }
             else
-                await musicWindow.Previous();
+                currentSongIndex=currentSongIndex == 0 ? currentSongIndex : --currentSongIndex;
+            await DownloadNextSong(isForward);
             if (playAfterMove) PlayMusic(source);
         }
 
@@ -57,8 +57,8 @@ namespace Assets.scripts
         {
             source.Stop();
             IsStarted = false;
-            await Task.Run(FillWindow);
-            //FillWindowBackground();
+            currentSongIndex = 0;
+            await DownloadNextSong(true);
         }
 
         public static void ReadNamesOfMusic()
@@ -69,10 +69,7 @@ namespace Assets.scripts
             var directoryPlayLists = musicDirectory.GetDirectories();
             foreach (var playlist in directoryPlayLists)
             {
-                var music = playlist.GetFiles("*.ogg", SearchOption.TopDirectoryOnly)
-                    .Union(playlist.GetFiles("*.mp3", SearchOption.TopDirectoryOnly)
-                        .Union(playlist.GetFiles("*.wav", SearchOption.TopDirectoryOnly)))
-                    .ToArray();
+                var music = playlist.GetFiles("*.mp3", SearchOption.TopDirectoryOnly).ToArray();
                 if (music.Length != 0) PlayListNaming.Add(playlist.Name);
                 var musicNames = new string[music.Length];
                 for (var i = 0; i < music.Length; i++) musicNames[i] = music[i].Name;
@@ -81,58 +78,34 @@ namespace Assets.scripts
         }
 
         public static async Task LoadStartSong()
-        {
-            await Task.Factory.StartNew(() => SetPlaylist(startPlayList));
-            Debug.Log("StartLoad");
-            var index = 0;
-            foreach (var clip in musicWindow)
+        {  
+            await SetPlaylist(startPlayList);
+            while (currentAudioClip.name!=startSong && currentSongIndex<musicFromCurrentPlaylist.Length)
             {
-                if (clip.name == startSong)
-                {
-                    musicWindow.SetOutToIndex(index);
-                    return;
-                }
-
-                index++;
-            }
-
-            index--;
-            musicWindow.SetOutToIndex(index);
-            while (musicWindow.CurrentNode.Value.name != startSong && index < musicFromCurrentPlaylist.Length)
-            {
-                await musicWindow.Next();
-                index++;
+                await DownloadNextSong(true);
             }
         }
 
-        public static async void SetPlaylist(string playlistName)  
+        public static async Task SetPlaylist(string playlistName)  
         {
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var playlists = musicDirectory.GetDirectories();
             var playlistToSet = playlists[0];
             foreach (var playlist in playlists)
-            {
-                Debug.Log(playlist.Name);
                 if (playlist.Name == playlistName)
                 {
                     playlistToSet = playlist;
                     break;
                 }
-            }
-
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            Debug.Log("New");
-            var task = Task.Factory.StartNew(FillWindow, TaskCreationOptions.AttachedToParent);
-            task.
+            currentSongIndex = 0;
+            await DownloadNextSong(true);
         }
 
-        public static async Task<AudioClip> DownloadNextSong(bool isRight)
+        private static async Task DownloadNextSong(bool isRight)
         {
-            var index = isRight ? rightEdgeSong++ : leftEdgeSong++;
-            var l = musicFromCurrentPlaylist.Length;
-            var x = musicFromCurrentPlaylist; 
-            var clip = musicFromCurrentPlaylist[index];
+            var clip = musicFromCurrentPlaylist[isRight ? currentSongIndex++ : currentSongIndex--];
             var url = UnityWebRequestMultimedia.GetAudioClip("file:///"
                                                              + PathCore.MusicDirectoryPath
                                                              + "/"
@@ -145,26 +118,11 @@ namespace Assets.scripts
             {
                 var audioClip = DownloadHandlerAudioClip.GetContent(url);
                 audioClip.name = clip.Name;
-                return audioClip;
+                currentAudioClip=audioClip;
             }
             catch (Exception)
             {
                 throw new Exception($"InvalidClip{clip.Name}");
-            }
-        }
-
-        public static async void FillWindow()
-        {
-            musicWindow?.Dispose();
-            musicWindow = new MusicWindow(WindowSize * 2 + 1, musicFromCurrentPlaylist.Length);
-            rightEdgeSong = 0;
-            leftEdgeSong = 0;
-            for (var i = 0; i <= musicWindow.Size; i++)
-            {
-                Debug.Log(i.ToString());
-                if (rightEdgeSong == musicFromCurrentPlaylist.Length) break;
-                await DownloadNextSong(true);
-                //musicWindow.AddLast(audioclipTask.Result);
             }
         }
     }

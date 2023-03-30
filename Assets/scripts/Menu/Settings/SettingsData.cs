@@ -3,7 +3,6 @@ using System;
 [Serializable]
 public class SettingsData
 {
-    public int CacheWindowSize;
     public float GlobalMusicVolume;
     public float GlobalSoundVolume;
     public bool IsFullScreen;
@@ -18,7 +17,6 @@ public class SettingsData
         return x.StartSong == y.StartSong
                && x.StartPlayList == y.StartPlayList
                && x.MusicPath == y.MusicPath
-               && x.CacheWindowSize == y.CacheWindowSize
                && x.GlobalMusicVolume == y.GlobalMusicVolume
                && x.GlobalSoundVolume == y.GlobalSoundVolume
                && x.IsFullScreen == y.IsFullScreen
@@ -31,7 +29,6 @@ public class SettingsData
         return !(x.StartSong == y.StartSong
                  && x.StartPlayList == y.StartPlayList
                  && x.MusicPath == y.MusicPath
-                 && x.CacheWindowSize == y.CacheWindowSize
                  && x.GlobalMusicVolume == y.GlobalMusicVolume
                  && x.GlobalSoundVolume == y.GlobalSoundVolume
                  && x.IsFullScreen == y.IsFullScreen

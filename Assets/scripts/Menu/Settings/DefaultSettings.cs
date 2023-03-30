@@ -11,7 +11,6 @@ namespace Assets.scripts
             data.StartPlayList = "menu";
             data.StartSong = "Angliya-Skazochniy Mir.mp3";
             data.MusicPath = Application.dataPath + @"/Music";
-            data.CacheWindowSize = 4;
             data.GlobalMusicVolume = 100f;
             data.GlobalSoundVolume = 1f;
             data.ResolutionWidth = Screen.currentResolution.width;

@@ -69,6 +69,7 @@ public class SettingsMenu : MonoBehaviour
     {
         UnsaveWarning.SetActive(false);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
+        MusicCore.ReadNamesOfMusic();
         SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
         CameraAnimator.SetBool("IsEnableSettings", false);
         ControllerManager.StopClock();

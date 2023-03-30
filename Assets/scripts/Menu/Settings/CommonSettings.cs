@@ -8,12 +8,14 @@ using UnityEngine;
 
 public class CommonSettings : MonoBehaviour, IResetable
 {
+    public GameObject DinamicMessage;
     public TMP_InputField MusicCacheSize;
     public TMP_InputField MusicPath;
     public AudioSource MusicSource;
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
     public TMP_Text WarningMessage;
+    public TMP_Text DynamicSubMessage;
 
     public void UpdateValues()
     {
@@ -41,14 +43,18 @@ public class CommonSettings : MonoBehaviour, IResetable
 
     public void SetStartPlayList()
     {
+        if (MusicCore.PlayListNaming.Count == 0) return;
         SettingsMenu.data.StartPlayList = MusicCore.PlayListNaming[StartPlaylist.value];
         UpdateSongsDropdown();
     }
 
     public void SetStartSong()
     {
-        SettingsMenu.data.StartSong =
-            MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]][StartSong.value];
+        if (MusicCore.PlayListNaming.Count!=0)
+        {
+            SettingsMenu.data.StartSong =
+                MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]][StartSong.value];
+        }
     }
 
     public void ReadMusicPath()
@@ -70,13 +76,15 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         MusicCore.StopMusic(MusicSource);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
-        await MusicCore.LoadStartSong();
+        DinamicMessage.SetActive(true);
+        await MusicCore.LoadStartSong(DynamicSubMessage);
+        DinamicMessage.SetActive(false);
         MusicCore.PlayMusic(MusicSource);
     }
 
     private void UpdateSongsDropdown()
     {
         StartSong.ClearOptions();
-        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        if(MusicCore.PlayListNaming.Count!=0) StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
     }
 }

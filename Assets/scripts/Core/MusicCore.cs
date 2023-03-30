@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -77,13 +78,16 @@ namespace Assets.scripts
             }
         }
 
-        public static async Task LoadStartSong()
+        public static async Task LoadStartSong(TMP_Text progressMessage)
         {  
             await SetPlaylist(startPlayList);
             while (currentAudioClip.name!=startSong && currentSongIndex<musicFromCurrentPlaylist.Length)
             {
                 await DownloadNextSong(true);
+                progressMessage.text = currentAudioClip.name;
             }
+
+            progressMessage.text = "";
         }
 
         public static async Task SetPlaylist(string playlistName)  

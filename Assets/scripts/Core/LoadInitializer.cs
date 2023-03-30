@@ -9,6 +9,7 @@ namespace Assets.scripts
     {
         private BackgroundWorker backgroundInitializator = new();
         public TMP_Text message;
+        public TMP_Text subMessage;
 
         private async void Awake()
         {
@@ -19,7 +20,7 @@ namespace Assets.scripts
             message.text = "Читаю музыку...";
             MusicCore.ReadNamesOfMusic();
             message.text = "Инициализирую музыку...";
-            await MusicCore.LoadStartSong();
+            await MusicCore.LoadStartSong(subMessage);
             message.text = "Загружаю меню...";
             SceneManager.LoadScene(1);
         }

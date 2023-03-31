@@ -12,7 +12,7 @@ using UnityEngine.Networking;
 
 namespace Assets.scripts
 {
-    public class MusicCore : MonoBehaviour
+    public static class MusicCore
     {
         private static AudioClip[] AllMusic;
         private static DirectoryInfo CurrentPlayList;
@@ -26,11 +26,12 @@ namespace Assets.scripts
             //AudioType.WAV
         };
 
+        private static string nakedName = "Untitled";
         public static Dictionary<string, string[]> MusicNameInPlaylists = new();
         public static List<string> PlayListNaming = new();
-        public static string startSong = "Angliya-Skazochniy Mir.mp3";
-        public static string startPlayList = "menu";
-        private static int currentSongIndex;
+        public static string startPlayList;
+        public static int StartSongIndex;
+        public static int CurrentSongIndex;
         private static AudioClip currentAudioClip;
         public static bool IsReady;
 
@@ -46,10 +47,13 @@ namespace Assets.scripts
             IsStarted = false;
             if (isForward)
             {
-                currentSongIndex %= musicFromCurrentPlaylist.Length;
+                CurrentSongIndex = CurrentSongIndex == musicFromCurrentPlaylist.Length - 1 ? -1 : CurrentSongIndex;
             }
-            else
-                currentSongIndex=currentSongIndex == 0 ? currentSongIndex : --currentSongIndex;
+            else if (CurrentSongIndex==0 && playAfterMove)
+            {
+                PlayMusic(source);
+                return;
+            }
             await DownloadNextSong(isForward);
             if (playAfterMove) PlayMusic(source);
         }
@@ -58,7 +62,7 @@ namespace Assets.scripts
         {
             source.Stop();
             IsStarted = false;
-            currentSongIndex = 0;
+            CurrentSongIndex = -1;
             await DownloadNextSong(true);
         }
 
@@ -76,25 +80,17 @@ namespace Assets.scripts
                 for (var i = 0; i < music.Length; i++) musicNames[i] = music[i].Name;
                 MusicNameInPlaylists[playlist.Name] = musicNames;
             }
+            var nakedMusic=musicDirectory.GetFiles("*.mp3", SearchOption.TopDirectoryOnly).ToArray();
+            if (nakedMusic.Length == 0) return;
+            MusicNameInPlaylists[nakedName] = nakedMusic.Select(x=>x.Name).ToArray();
+            PlayListNaming.Add(nakedName);
         }
 
-        public static async Task LoadStartSong(TMP_Text progressMessage)
-        {  
-            await SetPlaylist(startPlayList);
-            while (currentAudioClip.name!=startSong && currentSongIndex<musicFromCurrentPlaylist.Length)
-            {
-                await DownloadNextSong(true);
-                progressMessage.text = currentAudioClip.name;
-            }
-
-            progressMessage.text = "";
-        }
-
-        public static async Task SetPlaylist(string playlistName)  
+        public static async Task SetPlaylist(string playlistName, int songIndex=0)  
         {
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var playlists = musicDirectory.GetDirectories();
-            var playlistToSet = playlists[0];
+            var playlistToSet = musicDirectory;
             foreach (var playlist in playlists)
                 if (playlist.Name == playlistName)
                 {
@@ -103,17 +99,19 @@ namespace Assets.scripts
                 }
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            currentSongIndex = 0;
+            CurrentSongIndex = songIndex-1;
             await DownloadNextSong(true);
         }
 
         private static async Task DownloadNextSong(bool isRight)
         {
-            var clip = musicFromCurrentPlaylist[isRight ? currentSongIndex++ : currentSongIndex--];
+            var x = musicFromCurrentPlaylist;
+            var y = CurrentSongIndex;
+            var clip = musicFromCurrentPlaylist[isRight ? ++CurrentSongIndex : --CurrentSongIndex];
             var url = UnityWebRequestMultimedia.GetAudioClip("file:///"
                                                              + PathCore.MusicDirectoryPath
                                                              + "/"
-                                                             + CurrentPlayList.Name
+                                                             + CurrentPlayList.Name==nakedName?"":CurrentPlayList
                                                              + "/"
                                                              + clip.Name, AudioType.MPEG);
             url.SendWebRequest();
@@ -126,7 +124,7 @@ namespace Assets.scripts
             }
             catch (Exception)
             {
-                throw new Exception($"InvalidClip{clip.Name}");
+                throw new Exception($"Invalid Clip{clip.Name}");
             }
         }
     }

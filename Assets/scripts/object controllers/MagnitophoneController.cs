@@ -27,35 +27,36 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
     private RaycastHit _hit;
 
     public float RollSpeed = 0.0f;
-    private const float PlaySpeed = 1.6f;
-    private const float MoveSpeed = 20f;
+    private const float PlaySpeed = 100.6f;
+    private const float MoveSpeed = 2000f;
     private const float StopSpeed = 0.0f;
     private const float CommonWait = 0.5f;
     private const float MoveWait = 2.8f;
-    private bool _isPaused = false;
-    public static bool IsMoved;
+    private bool _isPaused;
+    public static bool IsReady;
     public void OnPointerClick(PointerEventData eventData)
     {
         var rayCaster = MainCamera.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(rayCaster, out _hit))
-            switch (_hit.collider.gameObject.name)
-            {
-                case "PlayButton":
-                    StartCoroutine(PressPlayButton());
-                    break;
+        if (!Physics.Raycast(rayCaster, out _hit) || !IsReady) return;
+        IsReady = false;
+        switch (_hit.collider.gameObject.name)
+        {
+            case "PlayButton":
+                StartCoroutine(PressPlayButton());
+                break;
 
-                case "StopButton":
-                    StartCoroutine(PressStopButton());
-                    break;
+            case "StopButton":
+                StartCoroutine(PressStopButton());
+                break;
 
-                case "MoveForwardButton":
-                    StartCoroutine(PressMoveButton(MoveForwardButtonAnimator, true));
-                    break;
+            case "MoveForwardButton":
+                StartCoroutine(PressMoveButton(MoveForwardButtonAnimator, true));
+                break;
 
-                case "MoveBackButton":
-                    StartCoroutine(PressMoveButton(MoveBackButtonAnimator, false));
-                    break;
-            }
+            case "MoveBackButton":
+                StartCoroutine(PressMoveButton(MoveBackButtonAnimator, false));
+                break;
+        }
     }
 
     // Start is called before the first frame update
@@ -69,7 +70,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
     {
         foreach (var obj in Rotatable)
         {
-            obj.transform.Rotate(-Vector3.up, RollSpeed);
+            obj.transform.Rotate(-Vector3.up, RollSpeed*Time.deltaTime);
         }
 
         if (!Music.isPlaying && PlayButtonAnimator.GetBool("IsBump") && MusicCore.IsStarted)
@@ -85,7 +86,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         RollSpeed=MoveSpeed*(isForward?1:-1);
         Music.Stop();
         MusicCore.IsStarted = false;
-        _isPaused=false;
+        _isPaused =false;
         SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.MoveMusic, 120f);
@@ -93,6 +94,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         MusicCore.MoveMusic(isForward, PlayButtonAnimator.GetBool("IsBump"), Music);
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         RollSpeed = temp;
+        IsReady = true;
     }
 
     public IEnumerator PressPlayButton()
@@ -117,6 +119,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         RollSpeed = Math.Abs(RollSpeed - StopSpeed) < 1e-3 ? PlaySpeed : StopSpeed;
+        IsReady=true;
     }
 
     public IEnumerator PressStopButton()
@@ -129,6 +132,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         StopButtonAnimator.SetBool("IsBump", !StopButtonAnimator.GetBool("IsBump"));
+        IsReady = true;
     }
 
 

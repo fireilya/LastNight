@@ -54,6 +54,7 @@ public class SettingsMenu : MonoBehaviour
     public void SetDefault()
     {
         SettingsCore.SetSettings(SettingsCore.ReadDefaultSettings());
+        MusicCore.ReadNamesOfMusic();
         UpdateSettingsValues();
     }
 
@@ -83,8 +84,10 @@ public class SettingsMenu : MonoBehaviour
 
     public void Save()
     {
+        SettingsCore.SetSettings(data);
+        MusicCore.ReadNamesOfMusic();
+        if (MusicCore.PlayListNaming.Count==0) return;
         SettingsCore.WriteSettingsTo(data, PathCore.SettingsFilePath);
-        SettingsCore.SetSettings(SettingsCore.ReadSettings());
     }
 
     private void UpdateSettingsValues()

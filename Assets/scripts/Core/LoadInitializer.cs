@@ -20,7 +20,7 @@ namespace Assets.scripts
             message.text = "Читаю музыку...";
             MusicCore.ReadNamesOfMusic();
             message.text = "Инициализирую музыку...";
-            await MusicCore.LoadStartSong(subMessage);
+            await MusicCore.SetPlaylist(MusicCore.startPlayList, MusicCore.StartSongIndex);
             message.text = "Загружаю меню...";
             SceneManager.LoadScene(1);
         }

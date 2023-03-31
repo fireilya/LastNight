@@ -8,20 +8,24 @@ using UnityEngine;
 
 public class CommonSettings : MonoBehaviour, IResetable
 {
-    public GameObject DinamicMessage;
-    public TMP_InputField MusicCacheSize;
     public TMP_InputField MusicPath;
     public AudioSource MusicSource;
     public TMP_Dropdown StartPlaylist;
     public TMP_Dropdown StartSong;
     public TMP_Text WarningMessage;
-    public TMP_Text DynamicSubMessage;
 
     public void UpdateValues()
     {
+        StartPlaylist.ClearOptions();
+        if (MusicCore.PlayListNaming.Count == 0)
+        {
+            StartSong.ClearOptions();
+            return;
+        }
+        StartPlaylist.AddOptions(MusicCore.PlayListNaming);
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         UpdateSongsDropdown();
-        StartSong.SetValueWithoutNotify(Array.IndexOf(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
+        StartSong.SetValueWithoutNotify(MusicCore.StartSongIndex);
         MusicPath.text = PathCore.MusicDirectoryPath;
     }
 
@@ -31,8 +35,7 @@ public class CommonSettings : MonoBehaviour, IResetable
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
         StartPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
         UpdateSongsDropdown();
-        StartSong.SetValueWithoutNotify(Array.IndexOf(
-            MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]], MusicCore.startSong));
+        StartSong.SetValueWithoutNotify(MusicCore.StartSongIndex);
         MusicPath.text = PathCore.MusicDirectoryPath;
     }
 
@@ -52,8 +55,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         if (MusicCore.PlayListNaming.Count!=0)
         {
-            SettingsMenu.data.StartSong =
-                MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]][StartSong.value];
+            SettingsMenu.data.StartSongIndex = StartSong.value;
         }
     }
 
@@ -64,7 +66,7 @@ public class CommonSettings : MonoBehaviour, IResetable
         MusicCore.ReadNamesOfMusic();
         var music =
             WarningMessage.text = MusicCore.MusicNameInPlaylists.Select(x => x.Value.Length).All(x => x == 0)
-                ? "Ќе найдено музыки в текущей аудитории!"
+                ? "Ќе найдено музыки в текущей директории!"
                 : "";
         StartPlaylist.AddOptions(MusicCore.PlayListNaming);
         UpdateSongsDropdown();
@@ -75,16 +77,15 @@ public class CommonSettings : MonoBehaviour, IResetable
     public async void UpdateMusic()
     {
         MusicCore.StopMusic(MusicSource);
-        SettingsCore.SetSettings(SettingsCore.ReadSettings());
-        DinamicMessage.SetActive(true);
-        await MusicCore.LoadStartSong(DynamicSubMessage);
-        DinamicMessage.SetActive(false);
+        await MusicCore.SetPlaylist(MusicCore.PlayListNaming[StartPlaylist.value], StartSong.value);
         MusicCore.PlayMusic(MusicSource);
     }
 
     private void UpdateSongsDropdown()
     {
         StartSong.ClearOptions();
-        if(MusicCore.PlayListNaming.Count!=0) StartSong.AddOptions(MusicCore.MusicNameInPlaylists[MusicCore.PlayListNaming[StartPlaylist.value]].ToList());
+        var currentPlaylist = MusicCore.PlayListNaming[StartPlaylist.value];
+        StartSong.AddOptions(MusicCore.MusicNameInPlaylists[currentPlaylist].ToList());
+        SettingsMenu.data.StartSongIndex = StartSong.value;
     }
 }

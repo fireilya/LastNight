@@ -10,15 +10,15 @@ public class SettingsData
     public int ResolutionHeight;
     public int ResolutionWidth;
     public string StartPlayList;
-    public string StartSong;
+    public int StartSongIndex;
 
     public static bool operator ==(SettingsData x, SettingsData y)
     {
-        return x.StartSong == y.StartSong
+        return x.StartSongIndex == y.StartSongIndex
                && x.StartPlayList == y.StartPlayList
                && x.MusicPath == y.MusicPath
-               && x.GlobalMusicVolume == y.GlobalMusicVolume
-               && x.GlobalSoundVolume == y.GlobalSoundVolume
+               && Math.Abs(x.GlobalMusicVolume - y.GlobalMusicVolume) < 1e-3
+               && Math.Abs(x.GlobalSoundVolume - y.GlobalSoundVolume) < 1e-3
                && x.IsFullScreen == y.IsFullScreen
                && x.ResolutionHeight == y.ResolutionHeight
                && x.ResolutionWidth == y.ResolutionWidth;
@@ -26,11 +26,11 @@ public class SettingsData
 
     public static bool operator !=(SettingsData x, SettingsData y)
     {
-        return !(x.StartSong == y.StartSong
+        return !(x.StartSongIndex == y.StartSongIndex
                  && x.StartPlayList == y.StartPlayList
                  && x.MusicPath == y.MusicPath
-                 && x.GlobalMusicVolume == y.GlobalMusicVolume
-                 && x.GlobalSoundVolume == y.GlobalSoundVolume
+                 && Math.Abs(x.GlobalMusicVolume - y.GlobalMusicVolume) < 1e-3
+                 && Math.Abs(x.GlobalSoundVolume - y.GlobalSoundVolume) < 1e-3
                  && x.IsFullScreen == y.IsFullScreen
                  && x.ResolutionHeight == y.ResolutionHeight
                  && x.ResolutionWidth == y.ResolutionWidth);

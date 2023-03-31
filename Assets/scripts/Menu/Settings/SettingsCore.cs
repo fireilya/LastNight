@@ -41,7 +41,7 @@ namespace Assets.scripts
         {
             SettingsMenu.data = data;
             MusicCore.startPlayList = data.StartPlayList;
-            MusicCore.startSong = data.StartSong;
+            MusicCore.StartSongIndex = data.StartSongIndex;
             PathCore.MusicDirectoryPath = data.MusicPath;
             MixerController.SoundVolume = data.GlobalSoundVolume;
             MixerController.MusicVolume = data.GlobalMusicVolume;

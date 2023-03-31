@@ -9,7 +9,7 @@ namespace Assets.scripts
         public static void CreateDefaultSettings()
         {
             data.StartPlayList = "menu";
-            data.StartSong = "Angliya-Skazochniy Mir.mp3";
+            data.StartSongIndex = 1;
             data.MusicPath = Application.dataPath + @"/Music";
             data.GlobalMusicVolume = 100f;
             data.GlobalSoundVolume = 1f;

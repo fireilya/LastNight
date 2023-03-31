@@ -26,8 +26,9 @@ public class GraphicsSettings : MonoBehaviour, IResetable
 
     private void Start()
     {
-        resolutionList = Screen.resolutions.Select(x => $"{x.width}X{x.height}").ToList();
-        screenResolutions = Screen.resolutions;
+        resolutionList = Screen.resolutions.Select(x => $"{x.width}X{x.height}").Distinct().ToList();
+        var screenHZ = Screen.currentResolution.refreshRateRatio;
+        screenResolutions = Screen.resolutions.Where(x=>Math.Abs(x.refreshRateRatio.value - screenHZ.value) < 1e-3).ToArray();
         ResolutionDropdown.ClearOptions();
         ResolutionDropdown.AddOptions(resolutionList);
         ResolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),

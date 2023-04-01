@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Video;
 
 public class MediaPlayer : MonoBehaviour
 {
     public static bool IsStarted;
-    public GameObject Fill;
-    public VideoPlayer VideoPlayer;
+
+    [SerializeField, FormerlySerializedAs("Fill")]
+    private GameObject fill;
+
+    [SerializeField, FormerlySerializedAs("VideoPlayer")]
+    private VideoPlayer videoPlayer;
 
     private void Start()
     {
@@ -14,11 +19,11 @@ public class MediaPlayer : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (VideoPlayer.isPlaying) IsStarted = true;
-        if ((!VideoPlayer.isPlaying && IsStarted) || Input.anyKeyDown)
+        if (videoPlayer.isPlaying) IsStarted = true;
+        if ((!videoPlayer.isPlaying && IsStarted) || Input.anyKeyDown)
         {
-            Fill.SetActive(false);
-            VideoPlayer.gameObject.SetActive(false);
+            fill.SetActive(false);
+            videoPlayer.gameObject.SetActive(false);
         }
     }
 }

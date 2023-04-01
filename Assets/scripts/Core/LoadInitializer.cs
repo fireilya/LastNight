@@ -7,9 +7,8 @@ namespace Assets.scripts
 {
     public class LoadInitializer : MonoBehaviour
     {
-        private BackgroundWorker backgroundInitializator = new();
-        public TMP_Text message;
-        public TMP_Text subMessage;
+        [SerializeField]
+        private TMP_Text message;
 
         private async void Awake()
         {

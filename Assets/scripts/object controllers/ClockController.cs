@@ -1,24 +1,27 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ClockController : MonoBehaviour
 {
     public static bool IsWalking = true;
-    public GameObject HourArrow;
-    public GameObject MinuteArrow;
-
-    public Animator PendulumAnimator;
+    [SerializeField, FormerlySerializedAs("hourArrow")]
+    private GameObject hourArrow;
+    [SerializeField, FormerlySerializedAs("minuteArrow")]
+    private GameObject minuteArrow;
+    [SerializeField] 
+    private Animator pendulumAnimator;
 
     public IEnumerator ClockWalk()
     {
-        PendulumAnimator.SetBool("InSettings", true);
+        pendulumAnimator.SetBool("InSettings", true);
         while (IsWalking)
         {
             yield return new WaitForSecondsRealtime(1f);
-            MinuteArrow.transform.Rotate(Vector3.forward, 360f / 3600f);
-            HourArrow.transform.Rotate(Vector3.forward, 360f / 3600f / 12f);
+            minuteArrow.transform.Rotate(Vector3.forward, 360f / 3600f);
+            hourArrow.transform.Rotate(Vector3.forward, 360f / 3600f / 12f);
         }
 
-        PendulumAnimator.SetBool("InSettings", false);
+        pendulumAnimator.SetBool("InSettings", false);
     }
 }

@@ -14,10 +14,8 @@ namespace Assets.scripts
 {
     public static class MusicCore
     {
-        private static AudioClip[] AllMusic;
         private static DirectoryInfo CurrentPlayList;
         private static FileInfo[] musicFromCurrentPlaylist;
-        public static bool IsStarted;
 
         private static AudioType[] SupportedAudioFormats =
         {
@@ -33,18 +31,23 @@ namespace Assets.scripts
         public static int StartSongIndex;
         public static int CurrentSongIndex;
         private static AudioClip currentAudioClip;
-        public static bool IsReady;
+        public static bool IsReady=true;
 
         public static void PlayMusic(AudioSource source)
         {
             source.clip = currentAudioClip;
             source.Play();
-            IsStarted = true;
         }
 
-        public static async Task MoveMusic(bool isForward, bool playAfterMove, AudioSource source)
+        public static void PlayMusic(AudioSource source, AudioClip clip)
         {
-            IsStarted = false;
+            source.clip = clip;
+            source.Play();
+        }
+
+        public static async void MoveMusic(bool isForward, bool playAfterMove, AudioSource source)
+        {
+            IsReady = false;
             if (isForward)
             {
                 CurrentSongIndex = CurrentSongIndex == musicFromCurrentPlaylist.Length - 1 ? -1 : CurrentSongIndex;
@@ -56,12 +59,12 @@ namespace Assets.scripts
             }
             await DownloadNextSong(isForward);
             if (playAfterMove) PlayMusic(source);
+            IsReady=true;
         }
 
         public static async void StopMusic(AudioSource source)
         {
             source.Stop();
-            IsStarted = false;
             CurrentSongIndex = -1;
             await DownloadNextSong(true);
         }

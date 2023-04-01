@@ -7,38 +7,53 @@ using Assets.scripts;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 
 public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
 {
-    public GameObject[] Rotatable;
+    [SerializeField, FormerlySerializedAs("rotatable")] 
+    private GameObject[] rotatable;
+    [SerializeField, FormerlySerializedAs("stopButtonAnimator")] 
+    private Animator stopButtonAnimator;
 
-    public Animator StopButtonAnimator;
-    public Animator PlayButtonAnimator;
-    public Animator MoveForwardButtonAnimator;
-    public Animator MoveBackButtonAnimator;
+    [SerializeField, FormerlySerializedAs("playButtonAnimator")] 
+    private Animator playButtonAnimator;
 
-    public AudioSource Music;
-    public AudioSource Sounder;
-    public SoundsController SounderControl;
+    [SerializeField, FormerlySerializedAs("moveForwardButtonAnimator")] 
+    private Animator moveForwardButtonAnimator;
 
-    public Camera MainCamera;
+    [SerializeField, FormerlySerializedAs("moveBackButtonAnimator")] 
+    private Animator moveBackButtonAnimator;
+
+    [SerializeField, FormerlySerializedAs("music")] 
+    private AudioSource music;
+
+    [SerializeField, FormerlySerializedAs("sounder")]
+    private AudioSource sounder;
+
+    [SerializeField, FormerlySerializedAs("sounderControl")] 
+    private SoundsController sounderControl;
+
+    [SerializeField, FormerlySerializedAs("mainCamera")]
+    private Camera mainCamera;
 
     private RaycastHit _hit;
 
-    public float RollSpeed = 0.0f;
+    private float RollSpeed = 0.0f;
     private const float PlaySpeed = 100.6f;
     private const float MoveSpeed = 2000f;
     private const float StopSpeed = 0.0f;
     private const float CommonWait = 0.5f;
     private const float MoveWait = 2.8f;
-    private bool _isPaused;
-    public static bool IsReady;
+    public bool IsPaused { get; private set; }
+    private static bool IsButtonsReady;
+    private static bool IsStarted;
     public void OnPointerClick(PointerEventData eventData)
     {
-        var rayCaster = MainCamera.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(rayCaster, out _hit) || !IsReady) return;
-        IsReady = false;
+        var rayCaster = mainCamera.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(rayCaster, out _hit) || !IsButtonsReady) return;
+        IsButtonsReady = false;
         switch (_hit.collider.gameObject.name)
         {
             case "PlayButton":
@@ -50,11 +65,11 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
                 break;
 
             case "MoveForwardButton":
-                StartCoroutine(PressMoveButton(MoveForwardButtonAnimator, true));
+                StartCoroutine(PressMoveButton(moveForwardButtonAnimator, true));
                 break;
 
             case "MoveBackButton":
-                StartCoroutine(PressMoveButton(MoveBackButtonAnimator, false));
+                StartCoroutine(PressMoveButton(moveBackButtonAnimator, false));
                 break;
         }
     }
@@ -68,14 +83,14 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
     // Update is called once per frame
     private void Update()
     {
-        foreach (var obj in Rotatable)
+        foreach (var obj in rotatable)
         {
             obj.transform.Rotate(-Vector3.up, RollSpeed*Time.deltaTime);
         }
 
-        if (!Music.isPlaying && PlayButtonAnimator.GetBool("IsBump") && MusicCore.IsStarted)
+        if (!music.isPlaying && playButtonAnimator.GetBool("IsBump") && IsStarted && MusicCore.IsReady)
         {
-            MusicCore.MoveMusic(true, true, Music);
+            MusicCore.MoveMusic(true, true, music);
         }
     }
 
@@ -84,65 +99,71 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         var temp=RollSpeed;
         RollSpeed=MoveSpeed*(isForward?1:-1);
-        Music.Stop();
-        MusicCore.IsStarted = false;
-        _isPaused =false;
-        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
+        music.Stop();
+        IsStarted = false;
+        IsPaused =false;
+        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
-        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.MoveMusic, 120f);
+        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.MoveMusic, 120f);
         yield return new WaitForSeconds(MoveWait);
-        MusicCore.MoveMusic(isForward, PlayButtonAnimator.GetBool("IsBump"), Music);
+        MusicCore.MoveMusic(isForward, playButtonAnimator.GetBool("IsBump"), music);
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         RollSpeed = temp;
-        IsReady = true;
+        IsButtonsReady = true;
+        IsStarted = true;
     }
 
     public IEnumerator PressPlayButton()
     {
-        PlayButtonAnimator.SetBool("IsBump", !PlayButtonAnimator.GetBool("IsBump"));
-        if (PlayButtonAnimator.GetBool("IsBump"))
+        playButtonAnimator.SetBool("IsBump", !playButtonAnimator.GetBool("IsBump"));
+        if (playButtonAnimator.GetBool("IsBump"))
         {
-            if (_isPaused)
+            if (IsPaused)
             {
-                Music.UnPause();
+                music.UnPause();
+                IsPaused=false;
             }
             else
             {
-                MusicCore.PlayMusic(Music);
+                MusicCore.PlayMusic(music);
+                IsStarted=true;
             }
         }
         else
         {
-            Music.Pause();
-            _isPaused = true;
+            music.Pause();
+            IsPaused = true;
         }
-        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
+        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         RollSpeed = Math.Abs(RollSpeed - StopSpeed) < 1e-3 ? PlaySpeed : StopSpeed;
-        IsReady=true;
+        IsButtonsReady=true;
     }
 
     public IEnumerator PressStopButton()
     {
-        StopButtonAnimator.SetBool("IsBump", !StopButtonAnimator.GetBool("IsBump"));
+        stopButtonAnimator.SetBool("IsBump", !stopButtonAnimator.GetBool("IsBump"));
         ReturnPlayButton();
         RollSpeed = StopSpeed;
-        MusicCore.StopMusic(Music);
-        _isPaused = false;
-        SounderControl.PlaySound(Sounder, SounderControl.FX, Sounds.PressButtonLatch);
+        MusicCore.StopMusic(music);
+        IsPaused = false;
+        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
-        StopButtonAnimator.SetBool("IsBump", !StopButtonAnimator.GetBool("IsBump"));
-        IsReady = true;
+        stopButtonAnimator.SetBool("IsBump", !stopButtonAnimator.GetBool("IsBump"));
+        IsButtonsReady = true;
     }
 
 
     private void ReturnPlayButton()
     {
-        if (PlayButtonAnimator.GetBool("IsBump"))
+        if (playButtonAnimator.GetBool("IsBump"))
         {
-            PlayButtonAnimator.SetBool("IsBump", false);
+            playButtonAnimator.SetBool("IsBump", false);
         }
     }
 
-
+    public void ResetPause()
+    {
+        IsPaused=false;
+    }
 }

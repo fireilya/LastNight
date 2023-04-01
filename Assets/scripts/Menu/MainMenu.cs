@@ -1,18 +1,26 @@
 using Assets.scripts;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MainMenu : MonoBehaviour
 {
-    public Animator CameraAnimator;
-    public ControllerManager ControllerManager;
-    public AudioSource Sounder;
-    public SoundsController SounderController;
+    [SerializeField, FormerlySerializedAs("CameraAnimator")]
+    private Animator cameraAnimator;
+
+    [SerializeField, FormerlySerializedAs("ControllerManager")]
+    private ControllerManager controllerManager;
+
+    [SerializeField, FormerlySerializedAs("Sounder")]
+    private AudioSource sounder;
+
+    [SerializeField, FormerlySerializedAs("SounderController")]
+    private SoundsController sounderController;
 
     public void EnableSettings()
     {
-        SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
-        CameraAnimator.SetBool("IsEnableSettings", true);
-        ControllerManager.StartClock();
+        sounderController.PlaySound(sounder, sounderController.FX, Sounds.Transition, 60f);
+        cameraAnimator.SetBool("IsEnableSettings", true);
+        controllerManager.StartClock();
     }
 
 

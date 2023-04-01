@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 
 public class MixerController : MonoBehaviour
 {
     public static float MusicVolume;
     public static float SoundVolume;
-    public AudioMixerGroup Mixer;
+    [SerializeField, FormerlySerializedAs("mixer")]
+    private AudioMixerGroup mixer;
 
     private void Update()
     {
-        Mixer.audioMixer.SetFloat("musicVolume", -100 + MusicVolume);
+        mixer.audioMixer.SetFloat("musicVolume", -100 + MusicVolume);
     }
 }

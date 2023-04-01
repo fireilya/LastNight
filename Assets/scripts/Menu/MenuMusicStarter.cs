@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Assets.scripts
 {
     internal class MenuMusicStarter : MonoBehaviour
     {
-        public MagnitophoneController Magnitophone;
+        [SerializeField, FormerlySerializedAs("Magnitophone")]
+        private MagnitophoneController magnitophone;
 
         private void Awake()
         {
@@ -15,7 +17,7 @@ namespace Assets.scripts
         private IEnumerator Starter()
         {
             while (!MediaPlayer.IsStarted) yield return null;
-            yield return StartCoroutine(Magnitophone.PressPlayButton());
+            yield return StartCoroutine(magnitophone.PressPlayButton());
         }
     }
 }

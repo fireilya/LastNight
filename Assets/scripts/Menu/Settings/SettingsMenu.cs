@@ -1,54 +1,89 @@
 using Assets.scripts;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SettingsMenu : MonoBehaviour
 {
-    public static SettingsData data = SettingsCore.ReadSettings();
-    public Animator CameraAnimator;
-    public GameObject Common;
-    public CommonSettings CommonSettings;
-    public ControllerManager ControllerManager;
-    public GameObject Graphics;
-    public GraphicsSettings GraphicsSettings;
-    public GameObject Menu;
-    public GameObject Movement;
-    public GameObject Settings;
-    public GameObject Sound;
-    public AudioSource Sounder;
-    public SoundsController SounderController;
-    public SoundSettings SoundSettings;
-    public GameObject UnsaveWarning;
+    public static SettingsData Data=SettingsCore.ReadSettings();
+
+    //public static void SetSettingsData(SettingsData data)
+    //{
+    //    Data.MusicPath=data.MusicPath;
+    //    Data.ResolutionWidth=data.ResolutionWidth;
+    //    Data.ResolutionHeight=data.ResolutionHeight;
+    //    Data.IsFullScreen=data.IsFullScreen;
+    //    Data.GlobalMusicVolume=data.GlobalMusicVolume;
+    //    Data.GlobalSoundVolume=data.GlobalSoundVolume;
+    //    Data.StartPlayList=data.StartPlayList;
+    //    Data.StartSongIndex=data.StartSongIndex;
+    //}
+
+    [SerializeField, FormerlySerializedAs("cameraAnimator")]
+    private Animator cameraAnimator;
+
+    [SerializeField, FormerlySerializedAs("Common")]
+    private GameObject common;
+
+    [SerializeField, FormerlySerializedAs("CommonSettings")]
+    private CommonSettings commonSettings;
+
+    [SerializeField, FormerlySerializedAs("ControllerManager")]
+    private ControllerManager controllerManager;
+
+    [SerializeField, FormerlySerializedAs("Graphics")]
+    private GameObject graphics;
+
+    [SerializeField, FormerlySerializedAs("GraphicsSettings")]
+    private GraphicsSettings graphicsSettings;
+
+    [SerializeField, FormerlySerializedAs("Movement")]
+    private GameObject movement;
+
+    [SerializeField, FormerlySerializedAs("Sound")]
+    private GameObject sound;
+
+    [SerializeField, FormerlySerializedAs("Sounder")]
+    private AudioSource sounder;
+
+    [SerializeField, FormerlySerializedAs("SounderController")]
+    private SoundsController sounderController;
+
+    [SerializeField, FormerlySerializedAs("SoundSettings")]
+    private SoundSettings soundSettings;
+
+    [SerializeField, FormerlySerializedAs("UnsaveWarning")]
+    private GameObject unsaveWarning;
 
     public void EnableCommon()
     {
-        Movement.SetActive(false);
-        Graphics.SetActive(false);
-        Sound.SetActive(false);
-        Common.SetActive(true);
+        movement.SetActive(false);
+        graphics.SetActive(false);
+        sound.SetActive(false);
+        common.SetActive(true);
     }
 
     public void EnableGraphics()
     {
-        Movement.SetActive(false);
-        Sound.SetActive(false);
-        Common.SetActive(false);
-        Graphics.SetActive(true);
+        movement.SetActive(false);
+        sound.SetActive(false);
+        common.SetActive(false);
+        graphics.SetActive(true);
     }
 
     public void EnableMovement()
     {
-        Graphics.SetActive(false);
-        Sound.SetActive(false);
-        Common.SetActive(false);
-        Movement.SetActive(true);
+        graphics.SetActive(false);
+        sound.SetActive(false);
+        common.SetActive(false);
+        movement.SetActive(true);
     }
 
     public void EnableSound()
     {
-        Movement.SetActive(false);
-        Graphics.SetActive(false);
-        Common.SetActive(false);
-        Sound.SetActive(true);
+        movement.SetActive(false);
+        graphics.SetActive(false);
+        common.SetActive(false);
+        sound.SetActive(true);
     }
 
     public void SetDefault()
@@ -60,40 +95,40 @@ public class SettingsMenu : MonoBehaviour
 
     public void TryQuit()
     {
-        if (SettingsCore.ReadSettings() != data)
-            UnsaveWarning.SetActive(true);
+        if (SettingsCore.ReadSettings() != Data)
+            unsaveWarning.SetActive(true);
         else
             Quit();
     }
 
     public void Quit()
     {
-        UnsaveWarning.SetActive(false);
+        unsaveWarning.SetActive(false);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
         MusicCore.ReadNamesOfMusic();
-        SounderController.PlaySound(Sounder, SounderController.FX, Sounds.Transition, 60f);
-        CameraAnimator.SetBool("IsEnableSettings", false);
-        ControllerManager.StopClock();
+        sounderController.PlaySound(sounder, sounderController.FX, Sounds.Transition, 60f);
+        cameraAnimator.SetBool("IsEnableSettings", false);
+        controllerManager.StopClock();
         UpdateSettingsValues();
     }
 
     public void Cancel()
     {
-        UnsaveWarning.SetActive(false);
+        unsaveWarning.SetActive(false);
     }
 
     public void Save()
     {
-        SettingsCore.SetSettings(data);
+        SettingsCore.SetSettings(Data);
         MusicCore.ReadNamesOfMusic();
         if (MusicCore.PlayListNaming.Count==0) return;
-        SettingsCore.WriteSettingsTo(data, PathCore.SettingsFilePath);
+        SettingsCore.WriteSettingsTo(Data, PathCore.SettingsFilePath);
     }
 
     private void UpdateSettingsValues()
     {
-        CommonSettings.UpdateValues();
-        SoundSettings.UpdateValues();
-        GraphicsSettings.UpdateValues();
+        commonSettings.UpdateValues();
+        soundSettings.UpdateValues();
+        graphicsSettings.UpdateValues();
     }
 }

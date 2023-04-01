@@ -4,44 +4,51 @@ using System.Linq;
 using Assets.scripts.Interfaces;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GraphicsSettings : MonoBehaviour, IResetable
 {
-    public Toggle FullScreen;
-    public TMP_Dropdown ResolutionDropdown;
+    [SerializeField, FormerlySerializedAs("FullScreen")]
+    private Toggle fullScreen;
+
+    [SerializeField, FormerlySerializedAs("ResolutionDropdown")]
+    private TMP_Dropdown resolutionDropdown;
+
     private List<string> resolutionList;
     private Resolution[] screenResolutions;
 
+
+
     public void UpdateValues()
     {
-        var x = ResolutionDropdown;
+        var x = resolutionDropdown;
         var y = resolutionList;
-        var z = SettingsMenu.data;
-        ResolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),
-            $"{SettingsMenu.data.ResolutionWidth}X{SettingsMenu.data.ResolutionHeight}"));
-        FullScreen.isOn = SettingsMenu.data.IsFullScreen;
+        var z = SettingsMenu.Data;
+        resolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),
+            $"{SettingsMenu.Data.ResolutionWidth}X{SettingsMenu.Data.ResolutionHeight}"));
+        fullScreen.isOn = SettingsMenu.Data.IsFullScreen;
         UpdateScreen();
     }
 
-    private void Start()
+    private void Awake()
     {
         resolutionList = Screen.resolutions.Select(x => $"{x.width}X{x.height}").Distinct().ToList();
         var screenHZ = Screen.currentResolution.refreshRateRatio;
         screenResolutions = Screen.resolutions.Where(x=>Math.Abs(x.refreshRateRatio.value - screenHZ.value) < 1e-3).ToArray();
-        ResolutionDropdown.ClearOptions();
-        ResolutionDropdown.AddOptions(resolutionList);
-        ResolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),
-            $"{SettingsMenu.data.ResolutionWidth}X{SettingsMenu.data.ResolutionHeight}"));
-        FullScreen.isOn = SettingsMenu.data.IsFullScreen;
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resolutionList);
+        resolutionDropdown.SetValueWithoutNotify(Array.IndexOf(resolutionList.ToArray(),
+            $"{SettingsMenu.Data.ResolutionWidth}X{SettingsMenu.Data.ResolutionHeight}"));
+        fullScreen.isOn = SettingsMenu.Data.IsFullScreen;
     }
 
     public void UpdateScreen()
     {
-        var resolution = screenResolutions[ResolutionDropdown.value];
-        SettingsMenu.data.ResolutionWidth = resolution.width;
-        SettingsMenu.data.ResolutionHeight = resolution.height;
-        SettingsMenu.data.IsFullScreen = FullScreen.isOn;
-        Screen.SetResolution(resolution.width, resolution.height, FullScreen.isOn);
+        var resolution = screenResolutions[resolutionDropdown.value];
+        SettingsMenu.Data.ResolutionWidth = resolution.width;
+        SettingsMenu.Data.ResolutionHeight = resolution.height;
+        SettingsMenu.Data.IsFullScreen = fullScreen.isOn;
+        Screen.SetResolution(resolution.width, resolution.height, fullScreen.isOn);
     }
 }

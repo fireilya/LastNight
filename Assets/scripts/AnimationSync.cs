@@ -1,5 +1,6 @@
 using Assets.scripts;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AnimationSync : MonoBehaviour
 {
@@ -9,29 +10,36 @@ public class AnimationSync : MonoBehaviour
         Sounds.OutTik
     };
 
-    public GameObject Common;
     private bool isMenuEnabled = true;
     private bool isSettingsEnabled;
-    public GameObject Menu;
-    public GameObject Settings;
-    public AudioSource Sounder;
-    public SoundsController SounderController;
+
+    [SerializeField, FormerlySerializedAs("Menu")]
+    private GameObject menu;
+
+    [SerializeField, FormerlySerializedAs("Settings")]
+    private GameObject settings;
+
+    [SerializeField, FormerlySerializedAs("Sounder")]
+    private AudioSource sounder;
+
+    [SerializeField, FormerlySerializedAs("SounderController")]
+    private SoundsController sounderController;
     private byte tik;
 
     public void PlayTik()
     {
-        SounderController.PlaySound(Sounder, SounderController.FX, _tikTak[++tik % 2]);
+        sounderController.PlaySound(sounder, sounderController.FX, _tikTak[++tik % 2]);
     }
 
     public void ToggleSetting()
     {
         isSettingsEnabled = !isSettingsEnabled;
-        Settings.SetActive(isSettingsEnabled);
+        settings.SetActive(isSettingsEnabled);
     }
 
     public void ToggleMenu()
     {
         isMenuEnabled = !isMenuEnabled;
-        Menu.SetActive(isMenuEnabled);
+        menu.SetActive(isMenuEnabled);
     }
 }

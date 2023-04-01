@@ -6,10 +6,6 @@ namespace Assets.scripts
     public static class SettingsCore
     {
         private static readonly BinaryFormatter formatter = new();
-        //public CommonSettings CommonSettings;
-        //public GameObject CommonSettings;
-        //public GameObject CommonSettings;
-        //public GameObject CommonSettings;
 
         public static void WriteSettingsTo(SettingsData dataToSave, string path)
         {
@@ -39,7 +35,7 @@ namespace Assets.scripts
 
         public static void SetSettings(SettingsData data)
         {
-            SettingsMenu.data = data;
+            SettingsMenu.Data=data;
             MusicCore.startPlayList = data.StartPlayList;
             MusicCore.StartSongIndex = data.StartSongIndex;
             PathCore.MusicDirectoryPath = data.MusicPath;

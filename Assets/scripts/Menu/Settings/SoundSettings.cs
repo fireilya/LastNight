@@ -1,33 +1,37 @@
 using Assets.scripts.Interfaces;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SoundSettings : MonoBehaviour, IResetable
 {
-    public Slider MusicVolume;
-    public Slider SoundVolume;
+    [SerializeField, FormerlySerializedAs("MusicVolume")]
+    private Slider musicVolume;
+
+    [SerializeField, FormerlySerializedAs("SoundVolume")]
+    private Slider soundVolume;
 
     public void UpdateValues()
     {
-        MusicVolume.value = MixerController.MusicVolume;
-        SoundVolume.value = MixerController.SoundVolume;
+        musicVolume.value = MixerController.MusicVolume;
+        soundVolume.value = MixerController.SoundVolume;
     }
 
     private void Start()
     {
-        MusicVolume.value = MixerController.MusicVolume;
-        SoundVolume.value = MixerController.SoundVolume;
+        musicVolume.value = MixerController.MusicVolume;
+        soundVolume.value = MixerController.SoundVolume;
     }
 
     public void SetMusicVolume()
     {
-        MixerController.MusicVolume = MusicVolume.value;
-        SettingsMenu.data.GlobalMusicVolume = MusicVolume.value;
+        MixerController.MusicVolume = musicVolume.value;
+        SettingsMenu.Data.GlobalMusicVolume = musicVolume.value;
     }
 
     public void SetSoundsVolume()
     {
-        MixerController.SoundVolume = SoundVolume.value;
-        SettingsMenu.data.GlobalSoundVolume = SoundVolume.value;
+        MixerController.SoundVolume = soundVolume.value;
+        SettingsMenu.Data.GlobalSoundVolume = soundVolume.value;
     }
 }

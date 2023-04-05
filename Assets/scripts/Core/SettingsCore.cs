@@ -36,7 +36,7 @@ namespace Assets.scripts
         public static void SetSettings(SettingsData data)
         {
             SettingsMenu.Data=data;
-            MusicCore.startPlayList = data.StartPlayList;
+            MusicCore.StartPlayList = data.StartPlayList;
             MusicCore.StartSongIndex = data.StartSongIndex;
             PathCore.MusicDirectoryPath = data.MusicPath;
             MixerController.SoundVolume = data.GlobalSoundVolume;

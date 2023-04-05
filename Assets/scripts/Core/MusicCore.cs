@@ -25,47 +25,54 @@ namespace Assets.scripts
         };
 
         private static string nakedName = "Untitled";
-        public static Dictionary<string, string[]> MusicNameInPlaylists = new();
+        public static Dictionary<string, string[]> MusicNameInPlaylists { get; private set; } = new();
         public static List<string> PlayListNaming = new();
-        public static string startPlayList;
-        public static int StartSongIndex;
-        public static int CurrentSongIndex;
+        public static string StartPlayList { get; set; }
+        public static int StartSongIndex { get; set; }
+        private static int currentSongIndex;
         private static AudioClip currentAudioClip;
         public static bool IsReady=true;
 
-        public static void PlayMusic(AudioSource source)
+        public static void PlayMusic(AudioSourceData sourceData)
         {
-            source.clip = currentAudioClip;
-            source.Play();
+            sourceData.Source.clip = currentAudioClip;
+            sourceData.Source.Play();
+            sourceData.IsPaused = false;
+            sourceData.IsStoped=false;
+            sourceData.IsStarted = true;
         }
 
-        public static void PlayMusic(AudioSource source, AudioClip clip)
+        public static void PlayMusic(AudioSourceData sourceData, AudioClip clip)
         {
-            source.clip = clip;
-            source.Play();
+            sourceData.Source.clip = clip;
+            sourceData.Source.Play();
+            sourceData.IsPaused = false;
+            sourceData.IsStoped = false;
         }
 
-        public static async void MoveMusic(bool isForward, bool playAfterMove, AudioSource source)
+        public static async void MoveMusic(bool isForward, bool playAfterMove, AudioSourceData sourceData)
         {
             IsReady = false;
             if (isForward)
             {
-                CurrentSongIndex = CurrentSongIndex == musicFromCurrentPlaylist.Length - 1 ? -1 : CurrentSongIndex;
+                currentSongIndex = currentSongIndex == musicFromCurrentPlaylist.Length - 1 ? -1 : currentSongIndex;
             }
-            else if (CurrentSongIndex==0 && playAfterMove)
+            else if (currentSongIndex==0 && playAfterMove)
             {
-                PlayMusic(source);
+                PlayMusic(sourceData);
                 return;
             }
             await DownloadNextSong(isForward);
-            if (playAfterMove) PlayMusic(source);
+            if (playAfterMove) PlayMusic(sourceData);
             IsReady=true;
         }
 
-        public static async void StopMusic(AudioSource source)
+        public static async void StopMusic(AudioSourceData sourceData)
         {
-            source.Stop();
-            CurrentSongIndex = -1;
+            sourceData.Source.Stop();
+            sourceData.IsStoped=true;
+            sourceData.IsStarted = false;
+            currentSongIndex = -1;
             await DownloadNextSong(true);
         }
 
@@ -89,7 +96,7 @@ namespace Assets.scripts
             PlayListNaming.Add(nakedName);
         }
 
-        public static async Task SetPlaylist(string playlistName, int songIndex=0)  
+        public static async Task SetPlaylist(string playlistName, int songIndex=0)
         {
             var musicDirectory = new DirectoryInfo(PathCore.MusicDirectoryPath);
             var playlists = musicDirectory.GetDirectories();
@@ -102,15 +109,16 @@ namespace Assets.scripts
                 }
             CurrentPlayList = playlistToSet;
             musicFromCurrentPlaylist = playlistToSet.GetFiles("*.mp3", SearchOption.TopDirectoryOnly);
-            CurrentSongIndex = songIndex-1;
+            currentSongIndex = songIndex-1;
             await DownloadNextSong(true);
+
         }
 
         private static async Task DownloadNextSong(bool isRight)
         {
             var x = musicFromCurrentPlaylist;
-            var y = CurrentSongIndex;
-            var clip = musicFromCurrentPlaylist[isRight ? ++CurrentSongIndex : --CurrentSongIndex];
+            var y = currentSongIndex;
+            var clip = musicFromCurrentPlaylist[isRight ? ++currentSongIndex : --currentSongIndex];
             var url = UnityWebRequestMultimedia.GetAudioClip("file:///"
                                                              + PathCore.MusicDirectoryPath
                                                              + "/"

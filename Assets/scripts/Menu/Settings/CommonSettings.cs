@@ -27,7 +27,10 @@ public class CommonSettings : MonoBehaviour, IResetable
     [SerializeField]
     private MagnitophoneController magnitophoneController;
 
+    [SerializeField]
+    private GameObject searcher;
 
+    private AudioSourceData musicSourceData;
     public void UpdateValues()
     {
         startPlaylist.ClearOptions();
@@ -37,7 +40,7 @@ public class CommonSettings : MonoBehaviour, IResetable
             return;
         }
         startPlaylist.AddOptions(MusicCore.PlayListNaming);
-        startPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
+        startPlaylist.SetValueWithoutNotify(MusicCore.PlayListNaming.IndexOf(MusicCore.StartPlayList));
         UpdateSongsDropdown();
         SettingsMenu.Data.StartSongIndex = startSong.value;
         startSong.SetValueWithoutNotify(MusicCore.StartSongIndex);
@@ -48,10 +51,11 @@ public class CommonSettings : MonoBehaviour, IResetable
     {
         startPlaylist.ClearOptions();
         startPlaylist.AddOptions(MusicCore.PlayListNaming);
-        startPlaylist.SetValueWithoutNotify(Array.IndexOf(MusicCore.PlayListNaming.ToArray(), MusicCore.startPlayList));
+        startPlaylist.SetValueWithoutNotify(MusicCore.PlayListNaming.IndexOf(MusicCore.StartPlayList));
         UpdateSongsDropdown();
         startSong.SetValueWithoutNotify(MusicCore.StartSongIndex);
         musicPath.text = PathCore.MusicDirectoryPath;
+        musicSourceData = new AudioSourceData(musicSource);
     }
 
     public void SetMusicDirectory()
@@ -67,9 +71,27 @@ public class CommonSettings : MonoBehaviour, IResetable
         SettingsMenu.Data.StartSongIndex = startSong.value;
     }
 
+    public void SetStartPlayList(int value)
+    {
+        startPlaylist.SetValueWithoutNotify(value);
+        if (MusicCore.PlayListNaming.Count == 0) return;
+        SettingsMenu.Data.StartPlayList = MusicCore.PlayListNaming[startPlaylist.value];
+        UpdateSongsDropdown();
+        SettingsMenu.Data.StartSongIndex = startSong.value;
+    }
+
     public void SetStartSong()
     {
         if (MusicCore.PlayListNaming.Count!=0)
+        {
+            SettingsMenu.Data.StartSongIndex = startSong.value;
+        }
+    }
+
+    public void SetStartSong(int value)
+    {
+        startSong.SetValueWithoutNotify(value);
+        if (MusicCore.PlayListNaming.Count != 0)
         {
             SettingsMenu.Data.StartSongIndex = startSong.value;
         }
@@ -93,7 +115,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     public async void UpdateMusic()
     {
         var isPlaying = musicSource.isPlaying;
-        MusicCore.StopMusic(musicSource);
+        MusicCore.StopMusic(musicSourceData);
         await MusicCore.SetPlaylist(MusicCore.PlayListNaming[startPlaylist.value], startSong.value);
         if (!isPlaying)
         {
@@ -101,7 +123,12 @@ public class CommonSettings : MonoBehaviour, IResetable
             return;
         }
 
-        MusicCore.PlayMusic(musicSource);
+        MusicCore.PlayMusic(musicSourceData);
+    }
+
+    public void StartSearch()
+    {
+        searcher.SetActive(true);
     }
 
     private void UpdateSongsDropdown()

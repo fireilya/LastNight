@@ -30,7 +30,6 @@ public class CommonSettings : MonoBehaviour, IResetable
     [SerializeField]
     private GameObject searcher;
 
-    private AudioSourceData musicSourceData;
     public void UpdateValues()
     {
         startPlaylist.ClearOptions();
@@ -55,7 +54,6 @@ public class CommonSettings : MonoBehaviour, IResetable
         UpdateSongsDropdown();
         startSong.SetValueWithoutNotify(MusicCore.StartSongIndex);
         musicPath.text = PathCore.MusicDirectoryPath;
-        musicSourceData = new AudioSourceData(musicSource);
     }
 
     public void SetMusicDirectory()
@@ -115,7 +113,7 @@ public class CommonSettings : MonoBehaviour, IResetable
     public async void UpdateMusic()
     {
         var isPlaying = musicSource.isPlaying;
-        MusicCore.StopMusic(musicSourceData);
+        MusicCore.StopMusic(magnitophoneController.musicSourceData);
         await MusicCore.SetPlaylist(MusicCore.PlayListNaming[startPlaylist.value], startSong.value);
         if (!isPlaying)
         {
@@ -123,7 +121,7 @@ public class CommonSettings : MonoBehaviour, IResetable
             return;
         }
 
-        MusicCore.PlayMusic(musicSourceData);
+        MusicCore.PlayMusic(magnitophoneController.musicSourceData);
     }
 
     public void StartSearch()

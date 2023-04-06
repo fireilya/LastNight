@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Assets.scripts;
+using Assets.scripts.Enum;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.EventSystems;
@@ -39,7 +40,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
     private Camera mainCamera;
 
     private RaycastHit _hit;
-    private AudioSourceData musicSourceData;
+    public AudioSourceData musicSourceData;
     private float RollSpeed = 0.0f;
     private const float PlaySpeed = 100.6f;
     private const float MoveSpeed = 2000f;
@@ -98,11 +99,12 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
         var temp=RollSpeed;
         RollSpeed=MoveSpeed*(isForward?1:-1);
+        musicSourceData.IsStoped = true;
         music.Stop();
         IsPaused =false;
-        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
+        sounderControl.PlaySound(sounder, sounderControl.Library.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
-        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.MoveMusic, 120f);
+        sounderControl.PlaySound(sounder, sounderControl.Library.FX, Sounds.MoveMusic, 120f);
         yield return new WaitForSeconds(MoveWait);
         MusicCore.MoveMusic(isForward, playButtonAnimator.GetBool("IsBump"), musicSourceData);
         buttonAnimator.SetBool("IsBump", !buttonAnimator.GetBool("IsBump"));
@@ -130,7 +132,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
             music.Pause();
             IsPaused = true;
         }
-        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
+        sounderControl.PlaySound(sounder, sounderControl.Library.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         RollSpeed = Math.Abs(RollSpeed - StopSpeed) < 1e-3 ? PlaySpeed : StopSpeed;
         IsButtonsReady=true;
@@ -143,7 +145,7 @@ public class MagnitophoneController : MonoBehaviour, IPointerClickHandler
         RollSpeed = StopSpeed;
         MusicCore.StopMusic(musicSourceData);
         IsPaused = false;
-        sounderControl.PlaySound(sounder, sounderControl.FX, Sounds.PressButtonLatch);
+        sounderControl.PlaySound(sounder, sounderControl.Library.FX, Sounds.PressButtonLatch);
         yield return new WaitForSeconds(CommonWait);
         stopButtonAnimator.SetBool("IsBump", !stopButtonAnimator.GetBool("IsBump"));
         IsButtonsReady = true;

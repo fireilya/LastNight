@@ -1,4 +1,5 @@
 using Assets.scripts;
+using Assets.scripts.Enum;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,7 +19,7 @@ public class MainMenu : MonoBehaviour
 
     public void EnableSettings()
     {
-        sounderController.PlaySound(sounder, sounderController.FX, Sounds.Transition, 60f);
+        sounderController.PlaySound(sounder, sounderController.Library.FX, Sounds.Transition, 60f);
         cameraAnimator.SetBool("IsEnableSettings", true);
         controllerManager.StartClock();
     }

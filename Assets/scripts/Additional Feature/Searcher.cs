@@ -68,7 +68,7 @@ public class Searcher : MonoBehaviour
         foreach (var song in MusicCore.MusicNameInPlaylists[playlistName])
         {
             if (!song.ToLower().Contains(substring)) continue;
-            dropdownOptions.Add(song);
+            dropdownOptions.Add($"({playlistName}) {song}");
             chooseData.Add((playlistName, song));
         }
     }

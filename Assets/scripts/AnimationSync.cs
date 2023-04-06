@@ -1,4 +1,5 @@
 using Assets.scripts;
+using Assets.scripts.Enum;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,7 +10,7 @@ public class AnimationSync : MonoBehaviour
         Sounds.EnterTik,
         Sounds.OutTik
     };
-
+        
     private bool isMenuEnabled = true;
     private bool isSettingsEnabled;
 
@@ -28,7 +29,7 @@ public class AnimationSync : MonoBehaviour
 
     public void PlayTik()
     {
-        sounderController.PlaySound(sounder, sounderController.FX, _tikTak[++tik % 2]);
+        sounderController.PlaySound(sounder, sounderController.Library.FX, _tikTak[++tik % 2]);
     }
 
     public void ToggleSetting()

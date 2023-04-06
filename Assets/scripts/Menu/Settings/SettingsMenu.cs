@@ -1,4 +1,5 @@
 using Assets.scripts;
+using Assets.scripts.Enum;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -106,7 +107,7 @@ public class SettingsMenu : MonoBehaviour
         unsaveWarning.SetActive(false);
         SettingsCore.SetSettings(SettingsCore.ReadSettings());
         MusicCore.ReadNamesOfMusic();
-        sounderController.PlaySound(sounder, sounderController.FX, Sounds.Transition, 60f);
+        sounderController.PlaySound(sounder, sounderController.Library.FX, Sounds.Transition, 60f);
         cameraAnimator.SetBool("IsEnableSettings", false);
         controllerManager.StopClock();
         UpdateSettingsValues();
